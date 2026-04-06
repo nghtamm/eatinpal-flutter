@@ -2,12 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:eatinpal/core/local/local_storage.dart';
 import 'package:eatinpal/core/network/api_client.dart';
+import 'package:eatinpal/modules/auth/auth.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
   await _initCore();
-  _initModules();
+  _initAuth();
 }
 
 Future<void> _initCore() async {
@@ -23,38 +24,27 @@ Future<void> _initCore() async {
   );
 }
 
-void _initModules() {
-  _initAuth();
-  _initTracking();
-  _initSchedule();
-}
-
 void _initAuth() {
   // Services
+  sl.registerLazySingleton(() => AuthService(sl<ApiClient>()));
 
   // Repositories
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(sl<AuthService>(), sl<LocalStorage>()),
+  );
 
   // UseCases
+  sl.registerLazySingleton(() => LoginUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => RegisterUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => GetProfileUseCase(sl<AuthRepository>()));
 
   // Blocs
-}
-
-void _initTracking() {
-  // Services
-
-  // Repositories
-
-  // UseCases
-
-  // Blocs
-}
-
-void _initSchedule() {
-  // Services
-
-  // Repositories
-
-  // UseCases
-
-  // Blocs
+  sl.registerFactory(
+    () => AuthBloc(
+      login: sl<LoginUseCase>(),
+      register: sl<RegisterUseCase>(),
+      logout: sl<LogoutUseCase>(),
+    ),
+  );
 }

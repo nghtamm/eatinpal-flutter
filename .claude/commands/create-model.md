@@ -17,5 +17,5 @@ Create a model and entity for "$ARGUMENTS" (format: module_name/model_name):
 Rules:
 - Use freezed_annotation and json_annotation
 - Add `part '<model_name>_model.freezed.dart'` and `part '<model_name>_model.g.dart'`
-- Run `dart run build_runner build --delete-conflicting-outputs` after creation
+- Run `fvm dart run build_runner build --delete-conflicting-outputs` after creation
 - Update the module barrel export file

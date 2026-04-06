@@ -125,6 +125,9 @@ app.*.symbols
 *.g.dart
 *.freezed.dart
 
+# FVM
+.fvm/
+
 # IDE
 .idea/
 .vscode/

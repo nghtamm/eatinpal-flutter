@@ -32,7 +32,7 @@ class LocalStorageImpl implements LocalStorage {
   @override
   Future<void> init() async {
     _secure = const FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      aOptions: AndroidOptions(),
     );
     _prefs = await SharedPreferences.getInstance();
   }

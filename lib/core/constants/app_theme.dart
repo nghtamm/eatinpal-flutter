@@ -22,7 +22,7 @@ abstract final class AppTheme {
           elevation: 0,
           centerTitle: true,
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: AppColors.CARD,
           elevation: 1,
           shape: RoundedRectangleBorder(

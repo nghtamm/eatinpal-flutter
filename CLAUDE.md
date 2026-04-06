@@ -4,7 +4,8 @@
 Mobile app (Android + iOS only) for tracking daily calories and nutrition, similar to MyFitnessPal. Backend is NestJS with JWT auth.
 
 ## Tech Stack
-- **Framework**: Flutter 3.24+ / Dart 3.5+
+- **Framework**: Flutter 3.41+ / Dart 3.11+ (managed via FVM)
+- **Version Manager**: FVM — always use `fvm flutter` / `fvm dart` instead of bare `flutter` / `dart`
 - **State Management**: flutter_bloc (NO freezed for bloc)
 - **DI**: get_it (service locator pattern)
 - **Network**: Dio with custom ApiClient wrapper
