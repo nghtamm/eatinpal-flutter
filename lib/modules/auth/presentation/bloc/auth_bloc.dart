@@ -32,12 +32,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _login(
       LoginParams(email: event.email, password: event.password),
     );
-    switch (result) {
-      case Left(value: final error):
-        emit(AuthError(error.message));
-      case Right(value: final user):
-        emit(AuthAuthenticated(user));
-    }
+    result.fold(
+      (left) => emit(AuthError(left.message)),
+      (right) => emit(AuthAuthenticated(right)),
+    );
   }
 
   Future<void> _onRegister(
@@ -52,12 +50,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         name: event.name,
       ),
     );
-    switch (result) {
-      case Left(value: final error):
-        emit(AuthError(error.message));
-      case Right(value: final user):
-        emit(AuthAuthenticated(user));
-    }
+    result.fold(
+      (left) => emit(AuthError(left.message)),
+      (right) => emit(AuthAuthenticated(right)),
+    );
   }
 
   Future<void> _onLogout(
@@ -66,11 +62,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     final result = await _logout();
-    switch (result) {
-      case Left(value: final error):
-        emit(AuthError(error.message));
-      case Right():
-        emit(const AuthUnauthenticated());
-    }
+    result.fold(
+      (left) => emit(AuthError(left.message)),
+      (right) => emit(const AuthUnauthenticated()),
+    );
   }
 }

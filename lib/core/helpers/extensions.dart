@@ -25,16 +25,16 @@ extension StringX on String {
     return '${this[0].toUpperCase()}${substring(1)}';
   }
 
-  bool get isValidEmail {
+  bool get isEmail {
     return RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(this);
   }
 }
 
 extension DateTimeX on DateTime {
   String get toDateString {
-    return '${year.toString().padLeft(4, '0')}-'
-        '${month.toString().padLeft(2, '0')}-'
-        '${day.toString().padLeft(2, '0')}';
+    return '${day.toString().padLeft(2, '0')}/'
+        '${month.toString().padLeft(2, '0')}/'
+        '${year.toString().padLeft(4, '0')}';
   }
 
   bool get isToday {
@@ -44,6 +44,6 @@ extension DateTimeX on DateTime {
 }
 
 extension NumX on num {
-  String get kcalStr => '${toStringAsFixed(0)} kcal';
-  String get gramStr => '${toStringAsFixed(1)}g';
+  String get kcal => '${toStringAsFixed(0)} kcal';
+  String get gram => '${toStringAsFixed(1)}g';
 }

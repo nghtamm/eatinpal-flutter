@@ -8,7 +8,7 @@ import 'package:eatinpal/modules/auth/auth.dart';
 class App extends StatelessWidget {
   App({super.key});
 
-  final _router = createRouter();
+  final _router = router();
 
   @override
   Widget build(BuildContext context) {

@@ -5,20 +5,28 @@ abstract class LocalStorage {
   Future<void> init();
 
   Future<String?> get accessToken;
+
   Future<String?> get refreshToken;
-  Future<void> saveTokens({
+
+  Future<void> saveCredentialsToken({
     required String accessToken,
     required String refreshToken,
   });
-  Future<void> clearTokens();
 
-  Future<bool> get isLoggedIn;
+  Future<void> clearCredentialsToken();
+
+  Future<bool> get signed;
 
   Future<void> setString(String key, String value);
+
   Future<String?> getString(String key);
+
   Future<void> setBool(String key, {required bool value});
+
   Future<bool?> getBool(String key);
+
   Future<void> remove(String key);
+
   Future<void> clear();
 }
 
@@ -31,9 +39,7 @@ class LocalStorageImpl implements LocalStorage {
 
   @override
   Future<void> init() async {
-    _secure = const FlutterSecureStorage(
-      aOptions: AndroidOptions(),
-    );
+    _secure = const FlutterSecureStorage(aOptions: AndroidOptions());
     _prefs = await SharedPreferences.getInstance();
   }
 
@@ -44,7 +50,7 @@ class LocalStorageImpl implements LocalStorage {
   Future<String?> get refreshToken => _secure.read(key: _REFRESH_TOKEN_KEY);
 
   @override
-  Future<void> saveTokens({
+  Future<void> saveCredentialsToken({
     required String accessToken,
     required String refreshToken,
   }) async {
@@ -55,7 +61,7 @@ class LocalStorageImpl implements LocalStorage {
   }
 
   @override
-  Future<void> clearTokens() async {
+  Future<void> clearCredentialsToken() async {
     await Future.wait([
       _secure.delete(key: _ACCESS_TOKEN_KEY),
       _secure.delete(key: _REFRESH_TOKEN_KEY),
@@ -63,7 +69,7 @@ class LocalStorageImpl implements LocalStorage {
   }
 
   @override
-  Future<bool> get isLoggedIn async {
+  Future<bool> get signed async {
     final token = await accessToken;
     return token != null;
   }
@@ -95,9 +101,6 @@ class LocalStorageImpl implements LocalStorage {
 
   @override
   Future<void> clear() async {
-    await Future.wait([
-      _prefs.clear(),
-      _secure.deleteAll(),
-    ]);
+    await Future.wait([_prefs.clear(), _secure.deleteAll()]);
   }
 }

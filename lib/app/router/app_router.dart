@@ -6,11 +6,11 @@ import 'package:eatinpal/core/di/service_locator.dart';
 import 'package:eatinpal/core/local/local_storage.dart';
 import 'package:eatinpal/modules/auth/auth.dart';
 
-final rootNavigatorKey = GlobalKey<NavigatorState>();
+final navigatorKey = GlobalKey<NavigatorState>();
 
-GoRouter createRouter() {
+GoRouter router() {
   return GoRouter(
-    navigatorKey: rootNavigatorKey,
+    navigatorKey: navigatorKey,
     initialLocation: RoutePaths.SPLASH,
     debugLogDiagnostics: true,
     redirect: _guard,
@@ -39,27 +39,18 @@ GoRouter createRouter() {
   );
 }
 
-Future<String?> _guard(
-  BuildContext context,
-  GoRouterState state,
-) async {
+Future<String?> _guard(BuildContext context, GoRouterState state) async {
   final storage = sl<LocalStorage>();
-  final loggedIn = await storage.isLoggedIn;
-  final isSplash = state.matchedLocation == RoutePaths.SPLASH;
-  final isAuth = state.matchedLocation == RoutePaths.LOGIN ||
+  final signed = await storage.signed;
+
+  final destSplash = state.matchedLocation == RoutePaths.SPLASH;
+  final destAuth =
+      state.matchedLocation == RoutePaths.LOGIN ||
       state.matchedLocation == RoutePaths.REGISTER;
 
-  if (isSplash) {
-    return loggedIn ? RoutePaths.HOME : RoutePaths.LOGIN;
-  }
-
-  if (!loggedIn && !isAuth) {
-    return RoutePaths.LOGIN;
-  }
-
-  if (loggedIn && isAuth) {
-    return RoutePaths.HOME;
-  }
+  if (destSplash) return signed ? RoutePaths.HOME : RoutePaths.LOGIN;
+  if (!signed && !destAuth) return RoutePaths.LOGIN;
+  if (signed && destAuth) return RoutePaths.HOME;
 
   return null;
 }

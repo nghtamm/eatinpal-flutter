@@ -13,7 +13,7 @@ class ApiClient {
 
   ApiClient(this._dio, LocalStorage storage) {
     _dio.options = BaseOptions(
-      baseUrl: ApiEndpoints.API_V1,
+      baseUrl: ApiEndpoints.BASE_URL,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
       contentType: Headers.jsonContentType,
@@ -39,34 +39,34 @@ class ApiClient {
       final options = Options(headers: headers);
 
       final response = switch (method) {
-        RestMethod.get => await _dio.get(
+        RestMethod.GET => await _dio.get(
             endpoint,
             queryParameters: query,
             options: options,
             cancelToken: cancelToken,
           ),
-        RestMethod.post => await _dio.post(
-            endpoint,
-            data: data,
-            queryParameters: query,
-            options: options,
-            cancelToken: cancelToken,
-          ),
-        RestMethod.put => await _dio.put(
+        RestMethod.POST => await _dio.post(
             endpoint,
             data: data,
             queryParameters: query,
             options: options,
             cancelToken: cancelToken,
           ),
-        RestMethod.patch => await _dio.patch(
+        RestMethod.PUT => await _dio.put(
             endpoint,
             data: data,
             queryParameters: query,
             options: options,
             cancelToken: cancelToken,
           ),
-        RestMethod.delete => await _dio.delete(
+        RestMethod.PATCH => await _dio.patch(
+            endpoint,
+            data: data,
+            queryParameters: query,
+            options: options,
+            cancelToken: cancelToken,
+          ),
+        RestMethod.DELETE => await _dio.delete(
             endpoint,
             data: data,
             queryParameters: query,

@@ -28,39 +28,39 @@ class AuthInterceptor extends QueuedInterceptorsWrapper {
 
     final refresh = await _storage.refreshToken;
     if (refresh == null) {
-      await _storage.clearTokens();
+      await _storage.clearCredentialsToken();
       return handler.next(err);
     }
 
     try {
-      final response = await _tokenRefreshDio().post(
+      final response = await _dioConfig().post(
         ApiEndpoints.REFRESH,
-        data: {'refreshToken': refresh},
+        data: {'refresh_token': refresh},
       );
 
-      final newAccess = response.data['accessToken'] as String;
-      final newRefresh = response.data['refreshToken'] as String?;
+      final rotatedAT = response.data['access_token'] as String;
+      final rotatedRT = response.data['refresh_token'] as String;
 
-      await _storage.saveTokens(
-        accessToken: newAccess,
-        refreshToken: newRefresh ?? refresh,
+      await _storage.saveCredentialsToken(
+        accessToken: rotatedAT,
+        refreshToken: rotatedRT,
       );
 
       final opts = err.requestOptions;
-      opts.headers['Authorization'] = 'Bearer $newAccess';
+      opts.headers['Authorization'] = 'Bearer $rotatedAT';
 
-      final retryResponse = await _dio.fetch(opts);
-      return handler.resolve(retryResponse);
+      final retry = await _dio.fetch(opts);
+      return handler.resolve(retry);
     } on DioException {
-      await _storage.clearTokens();
+      await _storage.clearCredentialsToken();
       return handler.next(err);
     }
   }
 
-  Dio _tokenRefreshDio() {
+  Dio _dioConfig() {
     return Dio(
       BaseOptions(
-        baseUrl: ApiEndpoints.API_V1,
+        baseUrl: ApiEndpoints.BASE_URL,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
       ),

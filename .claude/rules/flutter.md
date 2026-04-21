@@ -15,10 +15,16 @@ paths: ["lib/**/*.dart"]
 
 ## Code Quality
 - All constants declared outside classes/functions must be SNAKE_UPPERCASE
+- Enum values must also be SNAKE_UPPERCASE (e.g. `RestMethod.GET`, `ProtocolType.REST`)
 - Use trailing commas for multi-line expressions
 - Keep functions short - extract logic into helpers
 - Always handle null safety properly
 - Use `const` constructors wherever possible
+
+## Error Handling
+- Use `Either<AppException, T>` from fpdart for fallible operations
+- Unwrap with `.fold((left) => ..., (right) => ...)` — always name params `left` / `right`, not domain names
+- Avoid `switch (result) { case Left: ... case Right: ... }` pattern
 
 ## Models
 - Use freezed + json_serializable for data models

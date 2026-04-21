@@ -1,1 +1,1 @@
-enum ProtocolType { rest, ws, pubSub, graphql }
+enum ProtocolType { REST, WS, PUBSUB, GRAPHQL }

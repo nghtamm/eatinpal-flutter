@@ -17,16 +17,16 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     final result = await _service.login(email: email, password: password);
-    switch (result) {
-      case Left(value: final error):
-        return Left(error);
-      case Right(value: final token):
-        await _storage.saveTokens(
-          accessToken: token.accessToken,
-          refreshToken: token.refreshToken,
+    return result.fold(
+      (left) async => Left(left),
+      (right) async {
+        await _storage.saveCredentialsToken(
+          accessToken: right.accessToken,
+          refreshToken: right.refreshToken,
         );
-        return Right(token.user);
-    }
+        return Right(right.user);
+      },
+    );
   }
 
   @override
@@ -40,28 +40,28 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
       name: name,
     );
-    switch (result) {
-      case Left(value: final error):
-        return Left(error);
-      case Right(value: final token):
-        await _storage.saveTokens(
-          accessToken: token.accessToken,
-          refreshToken: token.refreshToken,
+    return result.fold(
+      (left) async => Left(left),
+      (right) async {
+        await _storage.saveCredentialsToken(
+          accessToken: right.accessToken,
+          refreshToken: right.refreshToken,
         );
-        return Right(token.user);
-    }
+        return Right(right.user);
+      },
+    );
   }
 
   @override
   Future<Either<AppException, void>> logout() async {
     final result = await _service.logout();
-    switch (result) {
-      case Left(value: final error):
-        return Left(error);
-      case Right():
-        await _storage.clearTokens();
+    return result.fold(
+      (left) async => Left(left),
+      (right) async {
+        await _storage.clearCredentialsToken();
         return const Right(null);
-    }
+      },
+    );
   }
 
   @override

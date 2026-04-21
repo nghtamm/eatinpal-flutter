@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// SizedBox Height
+// [GAP] Vertical/Height
 const SIZED_BOX_H2 = SizedBox(height: 2);
 const SIZED_BOX_H4 = SizedBox(height: 4);
 const SIZED_BOX_H6 = SizedBox(height: 6);
@@ -16,7 +16,7 @@ const SIZED_BOX_H48 = SizedBox(height: 48);
 const SIZED_BOX_H56 = SizedBox(height: 56);
 const SIZED_BOX_H64 = SizedBox(height: 64);
 
-// SizedBox Width
+// [GAP] Horizontal/Width
 const SIZED_BOX_W2 = SizedBox(width: 2);
 const SIZED_BOX_W4 = SizedBox(width: 4);
 const SIZED_BOX_W6 = SizedBox(width: 6);
@@ -28,10 +28,10 @@ const SIZED_BOX_W20 = SizedBox(width: 20);
 const SIZED_BOX_W24 = SizedBox(width: 24);
 const SIZED_BOX_W32 = SizedBox(width: 32);
 
-// Spacer
+// [SPACER]
 const SPACER = Spacer();
 
-// Padding values
+// [PADDING]
 abstract final class AppPadding {
   static const double XS = 4;
   static const double SM = 8;
@@ -43,7 +43,7 @@ abstract final class AppPadding {
   static const double XXXL = 40;
 }
 
-// Border Radius values
+// [BORDER RADIUS]
 abstract final class AppRadius {
   static const double XS = 4;
   static const double SM = 8;

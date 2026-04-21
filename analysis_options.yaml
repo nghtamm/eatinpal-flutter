@@ -2,20 +2,20 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
+    avoid_print: true
+    avoid_unnecessary_containers: true
+    constant_identifier_names: false
+    non_constant_identifier_names: false
     prefer_const_constructors: true
     prefer_const_declarations: true
     prefer_const_literals_to_create_immutables: true
     prefer_final_locals: true
-    avoid_print: true
-    require_trailing_commas: true
+    prefer_is_empty: true
     prefer_single_quotes: true
+    require_trailing_commas: true
+    sized_box_for_whitespace: true
     sort_child_properties_last: true
     use_key_in_widget_constructors: true
-    sized_box_for_whitespace: true
-    prefer_is_empty: true
-    avoid_unnecessary_containers: true
-    constant_identifier_names: false
-    non_constant_identifier_names: false
 
 analyzer:
   errors:

@@ -34,7 +34,7 @@ lib/
     helpers/             # Extensions, utilities
     local/               # Local storage abstraction
     network/             # ApiClient, interceptors, error handling
-    use_case/            # Base UseCase class
+    usecase/             # Base UseCase class
     widgets/             # Shared widgets across modules
   modules/               # Feature modules
     <module>/

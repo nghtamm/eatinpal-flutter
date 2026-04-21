@@ -12,7 +12,9 @@ Create a BLoC for "$ARGUMENTS" (format: module_name/bloc_name):
 
 Rules:
 - Use equatable for events and states, NOT freezed
-- States should have: initial, loading, success, failure variants
+- Pick state style based on the BLoC Style Guide in `.claude/rules/flutter.md`:
+  - Style A (multi-class) when states carry different data shapes
+  - Style B (single-class with status enum) when states share most fields
 - Include proper imports and exports
 - Register the bloc as factory in service_locator.dart
 - Update the module barrel export file

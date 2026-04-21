@@ -19,4 +19,4 @@ export 'presentation/bloc/auth_state.dart';
 export 'presentation/pages/splash_page.dart';
 export 'presentation/pages/login_page.dart';
 export 'presentation/pages/register_page.dart';
-export 'presentation/widgets/auth_text_field.dart';
+export 'presentation/widgets/auth_textfield.dart';

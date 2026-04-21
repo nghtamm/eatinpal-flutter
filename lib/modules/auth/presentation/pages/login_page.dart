@@ -9,7 +9,7 @@ import 'package:eatinpal/core/helpers/extensions.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_bloc.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_event.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_state.dart';
-import 'package:eatinpal/modules/auth/presentation/widgets/auth_text_field.dart';
+import 'package:eatinpal/modules/auth/presentation/widgets/auth_textfield.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                         if (value == null || value.trim().isEmpty) {
                           return 'Email is required';
                         }
-                        if (!value.trim().isValidEmail) {
+                        if (!value.trim().isEmail) {
                           return 'Enter a valid email';
                         }
                         return null;

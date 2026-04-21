@@ -1,1 +1,1 @@
-enum RestMethod { get, post, put, patch, delete }
+enum RestMethod { GET, POST, PUT, PATCH, DELETE }

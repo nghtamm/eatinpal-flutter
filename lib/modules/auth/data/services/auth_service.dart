@@ -17,7 +17,7 @@ class AuthService {
   }) {
     return _client.request(
       endpoint: ApiEndpoints.LOGIN,
-      method: RestMethod.post,
+      method: RestMethod.POST,
       data: {'email': email, 'password': password},
       parser: (data) => AuthTokenModel.fromJson(data),
     );
@@ -30,7 +30,7 @@ class AuthService {
   }) {
     return _client.request(
       endpoint: ApiEndpoints.REGISTER,
-      method: RestMethod.post,
+      method: RestMethod.POST,
       data: {'email': email, 'password': password, 'name': name},
       parser: (data) => AuthTokenModel.fromJson(data),
     );
@@ -39,7 +39,7 @@ class AuthService {
   Future<Either<AppException, void>> logout() {
     return _client.request(
       endpoint: ApiEndpoints.LOGOUT,
-      method: RestMethod.post,
+      method: RestMethod.POST,
       parser: (_) {},
     );
   }
@@ -47,7 +47,7 @@ class AuthService {
   Future<Either<AppException, UserModel>> getProfile() {
     return _client.request(
       endpoint: ApiEndpoints.PROFILE,
-      method: RestMethod.get,
+      method: RestMethod.GET,
       parser: (data) => UserModel.fromJson(data),
     );
   }

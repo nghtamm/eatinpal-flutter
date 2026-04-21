@@ -33,7 +33,7 @@ void _initAuth() {
     () => AuthRepositoryImpl(sl<AuthService>(), sl<LocalStorage>()),
   );
 
-  // UseCases
+  // Usecases
   sl.registerLazySingleton(() => LoginUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => RegisterUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => LogoutUseCase(sl<AuthRepository>()));
