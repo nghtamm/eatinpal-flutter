@@ -1,45 +1,36 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/fpdart.dart';
+import 'package:eatinpal/core/network/exceptions.dart';
 import 'package:eatinpal/modules/auth/domain/usecases/login_usecase.dart';
 import 'package:eatinpal/modules/auth/domain/usecases/register_usecase.dart';
-import 'package:eatinpal/modules/auth/domain/usecases/logout_usecase.dart';
+import 'package:eatinpal/modules/auth/domain/usecases/resend_verification_usecase.dart';
+import 'package:eatinpal/modules/auth/domain/usecases/verified_login_usecase.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_event.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final LoginUseCase _login;
   final RegisterUseCase _register;
-  final LogoutUseCase _logout;
+  final LoginUseCase _login;
+  final ResendVerificationUseCase _resendVerification;
+  final VerifiedLoginUseCase _verifiedLogin;
 
   AuthBloc({
-    required LoginUseCase login,
     required RegisterUseCase register,
-    required LogoutUseCase logout,
-  })  : _login = login,
-        _register = register,
-        _logout = logout,
-        super(const AuthInitial()) {
-    on<AuthLoginRequested>(_onLogin);
-    on<AuthRegisterRequested>(_onRegister);
-    on<AuthLogoutRequested>(_onLogout);
-  }
-
-  Future<void> _onLogin(
-    AuthLoginRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(const AuthLoading());
-    final result = await _login(
-      LoginParams(email: event.email, password: event.password),
-    );
-    result.fold(
-      (left) => emit(AuthError(left.message)),
-      (right) => emit(AuthAuthenticated(right)),
-    );
+    required LoginUseCase login,
+    required ResendVerificationUseCase resendVerification,
+    required VerifiedLoginUseCase verifiedLogin,
+  }) : _register = register,
+       _login = login,
+       _resendVerification = resendVerification,
+       _verifiedLogin = verifiedLogin,
+       super(const AuthInitial()) {
+    on<AuthRegisterSubmitted>(_onRegister);
+    on<AuthLoginSubmitted>(_onLogin);
+    on<AuthResendVerificationRequested>(_onResendVerification);
+    on<AuthVerifiedLoginRequested>(_onVerifiedLogin);
   }
 
   Future<void> _onRegister(
-    AuthRegisterRequested event,
+    AuthRegisterSubmitted event,
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
@@ -51,20 +42,51 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ),
     );
     result.fold(
-      (left) => emit(AuthError(left.message)),
-      (right) => emit(AuthAuthenticated(right)),
+      (left) => emit(AuthFailure(left.message)),
+      (right) => emit(AuthSuccess(right)),
     );
   }
 
-  Future<void> _onLogout(
-    AuthLogoutRequested event,
+  Future<void> _onLogin(
+    AuthLoginSubmitted event,
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    final result = await _logout();
+    final result = await _login(
+      LoginParams(email: event.email, password: event.password),
+    );
+    result.fold((left) {
+      if (left is ForbiddenException) {
+        emit(AuthRequiresVerification(left.message));
+      } else {
+        emit(AuthFailure(left.message));
+      }
+    }, (right) => emit(AuthSuccess(right)));
+  }
+
+  Future<void> _onResendVerification(
+    AuthResendVerificationRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthInitial());
+    final result = await _resendVerification(
+      ResendVerificationParams(email: event.email),
+    );
     result.fold(
-      (left) => emit(AuthError(left.message)),
-      (right) => emit(const AuthUnauthenticated()),
+      (left) => emit(AuthFailure(left.message)),
+      (right) => emit(AuthSuccess(right)),
+    );
+  }
+
+  Future<void> _onVerifiedLogin(
+    AuthVerifiedLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+    final result = await _verifiedLogin();
+    result.fold(
+      (left) => emit(AuthFailure(left.message)),
+      (right) => emit(AuthSuccess(right)),
     );
   }
 }

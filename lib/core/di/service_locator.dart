@@ -36,15 +36,18 @@ void _initAuth() {
   // Usecases
   sl.registerLazySingleton(() => LoginUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => RegisterUseCase(sl<AuthRepository>()));
-  sl.registerLazySingleton(() => LogoutUseCase(sl<AuthRepository>()));
-  sl.registerLazySingleton(() => GetProfileUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(
+    () => ResendVerificationUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton(() => VerifiedLoginUseCase(sl<AuthRepository>()));
 
   // Blocs
   sl.registerFactory(
     () => AuthBloc(
-      login: sl<LoginUseCase>(),
       register: sl<RegisterUseCase>(),
-      logout: sl<LogoutUseCase>(),
+      login: sl<LoginUseCase>(),
+      resendVerification: sl<ResendVerificationUseCase>(),
+      verifiedLogin: sl<VerifiedLoginUseCase>(),
     ),
   );
 }

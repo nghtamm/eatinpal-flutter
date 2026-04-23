@@ -51,3 +51,10 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+    - family: Epilogue
+      fonts:
+        - asset: assets/fonts/Epilogue-VariableFont_wght.ttf
