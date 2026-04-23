@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:eatinpal/modules/auth/domain/entities/user_entity.dart';
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -16,23 +15,28 @@ class AuthLoading extends AuthState {
   const AuthLoading();
 }
 
-class AuthAuthenticated extends AuthState {
-  final UserEntity user;
-
-  const AuthAuthenticated(this.user);
-
-  @override
-  List<Object?> get props => [user];
-}
-
-class AuthUnauthenticated extends AuthState {
-  const AuthUnauthenticated();
-}
-
-class AuthError extends AuthState {
+class AuthSuccess extends AuthState {
   final String message;
 
-  const AuthError(this.message);
+  const AuthSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class AuthRequiresVerification extends AuthState {
+  final String message;
+
+  const AuthRequiresVerification(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class AuthFailure extends AuthState {
+  final String message;
+
+  const AuthFailure(this.message);
 
   @override
   List<Object?> get props => [message];

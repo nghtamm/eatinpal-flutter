@@ -8,12 +8,24 @@ abstract class LocalStorage {
 
   Future<String?> get refreshToken;
 
+  Future<String?> get verificationToken;
+
+  Future<String?> get user;
+
   Future<void> saveCredentialsToken({
     required String accessToken,
     required String refreshToken,
   });
 
+  Future<void> saveVerificationToken(String token);
+
+  Future<void> saveUser(String userJSON);
+
   Future<void> clearCredentialsToken();
+
+  Future<void> clearVerificationToken();
+
+  Future<void> clearUser();
 
   Future<bool> get signed;
 
@@ -33,6 +45,8 @@ abstract class LocalStorage {
 class LocalStorageImpl implements LocalStorage {
   static const _ACCESS_TOKEN_KEY = 'access_token';
   static const _REFRESH_TOKEN_KEY = 'refresh_token';
+  static const _VERIFICATION_TOKEN_KEY = 'verification_token';
+  static const _USER_KEY = 'user';
 
   late final FlutterSecureStorage _secure;
   late final SharedPreferences _prefs;
@@ -50,6 +64,13 @@ class LocalStorageImpl implements LocalStorage {
   Future<String?> get refreshToken => _secure.read(key: _REFRESH_TOKEN_KEY);
 
   @override
+  Future<String?> get verificationToken =>
+      _secure.read(key: _VERIFICATION_TOKEN_KEY);
+
+  @override
+  Future<String?> get user async => _prefs.getString(_USER_KEY);
+
+  @override
   Future<void> saveCredentialsToken({
     required String accessToken,
     required String refreshToken,
@@ -61,11 +82,31 @@ class LocalStorageImpl implements LocalStorage {
   }
 
   @override
+  Future<void> saveVerificationToken(String token) async {
+    await _secure.write(key: _VERIFICATION_TOKEN_KEY, value: token);
+  }
+
+  @override
+  Future<void> saveUser(String userJSON) async {
+    await _prefs.setString(_USER_KEY, userJSON);
+  }
+
+  @override
   Future<void> clearCredentialsToken() async {
     await Future.wait([
       _secure.delete(key: _ACCESS_TOKEN_KEY),
       _secure.delete(key: _REFRESH_TOKEN_KEY),
     ]);
+  }
+
+  @override
+  Future<void> clearVerificationToken() async {
+    await _secure.delete(key: _VERIFICATION_TOKEN_KEY);
+  }
+
+  @override
+  Future<void> clearUser() async {
+    await _prefs.remove(_USER_KEY);
   }
 
   @override

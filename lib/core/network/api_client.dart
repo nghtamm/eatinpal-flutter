@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:eatinpal/core/network/api_endpoints.dart';
 import 'package:eatinpal/core/network/api_methods.dart';
+import 'package:eatinpal/core/network/api_result.dart';
 import 'package:eatinpal/core/network/error_handler.dart';
 import 'package:eatinpal/core/network/exceptions.dart';
 import 'package:eatinpal/core/network/interceptors/auth_interceptor.dart';
@@ -26,7 +27,7 @@ class ApiClient {
     ]);
   }
 
-  Future<Either<AppException, T>> request<T>({
+  Future<Either<AppException, ApiResult<T>>> request<T>({
     required String endpoint,
     required RestMethod method,
     Map<String, dynamic>? query,
@@ -40,52 +41,48 @@ class ApiClient {
 
       final response = switch (method) {
         RestMethod.GET => await _dio.get(
-            endpoint,
-            queryParameters: query,
-            options: options,
-            cancelToken: cancelToken,
-          ),
+          endpoint,
+          queryParameters: query,
+          options: options,
+          cancelToken: cancelToken,
+        ),
         RestMethod.POST => await _dio.post(
-            endpoint,
-            data: data,
-            queryParameters: query,
-            options: options,
-            cancelToken: cancelToken,
-          ),
+          endpoint,
+          data: data,
+          queryParameters: query,
+          options: options,
+          cancelToken: cancelToken,
+        ),
         RestMethod.PUT => await _dio.put(
-            endpoint,
-            data: data,
-            queryParameters: query,
-            options: options,
-            cancelToken: cancelToken,
-          ),
+          endpoint,
+          data: data,
+          queryParameters: query,
+          options: options,
+          cancelToken: cancelToken,
+        ),
         RestMethod.PATCH => await _dio.patch(
-            endpoint,
-            data: data,
-            queryParameters: query,
-            options: options,
-            cancelToken: cancelToken,
-          ),
+          endpoint,
+          data: data,
+          queryParameters: query,
+          options: options,
+          cancelToken: cancelToken,
+        ),
         RestMethod.DELETE => await _dio.delete(
-            endpoint,
-            data: data,
-            queryParameters: query,
-            options: options,
-            cancelToken: cancelToken,
-          ),
+          endpoint,
+          data: data,
+          queryParameters: query,
+          options: options,
+          cancelToken: cancelToken,
+        ),
       };
 
-      final result = parser != null
-          ? parser(response.data)
-          : response.data as T;
-
-      return Right(result);
+      return Right(_unwrap(response, parser));
     } on DioException catch (e) {
       return Left(ErrorHandler.handle(e));
     }
   }
 
-  Future<Either<AppException, T>> upload<T>({
+  Future<Either<AppException, ApiResult<T>>> upload<T>({
     required String endpoint,
     required FormData formData,
     Map<String, String>? headers,
@@ -107,13 +104,20 @@ class ApiClient {
         onSendProgress: onProgress,
       );
 
-      final result = parser != null
-          ? parser(response.data)
-          : response.data as T;
-
-      return Right(result);
+      return Right(_unwrap(response, parser));
     } on DioException catch (e) {
       return Left(ErrorHandler.handle(e));
     }
+  }
+
+  ApiResult<T> _unwrap<T>(Response response, T Function(dynamic)? parser) {
+    final envelope = response.data as Map<String, dynamic>;
+    final status =
+        envelope['status_code'] as int? ?? response.statusCode ?? 200;
+    final message = envelope['message'] as String? ?? '';
+    final data = parser != null
+        ? parser(envelope['data'])
+        : envelope['data'] as T;
+    return ApiResult(statusCode: status, message: message, data: data);
   }
 }

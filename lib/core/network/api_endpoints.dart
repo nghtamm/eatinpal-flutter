@@ -8,6 +8,6 @@ abstract final class ApiEndpoints {
   static const String LOGIN = '/auth/login';
   static const String REGISTER = '/auth/register';
   static const String REFRESH = '/auth/refresh';
-  static const String LOGOUT = '/auth/logout';
-  static const String PROFILE = '/auth/profile';
+  static const String RESEND_VERIFICATION = '/auth/resend-verification';
+  static const String VERIFIED_LOGIN = '/auth/verified-login';
 }

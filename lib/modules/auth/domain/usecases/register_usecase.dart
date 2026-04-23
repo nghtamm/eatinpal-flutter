@@ -1,7 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:eatinpal/core/network/exceptions.dart';
 import 'package:eatinpal/core/usecase/usecase.dart';
-import 'package:eatinpal/modules/auth/domain/entities/user_entity.dart';
 import 'package:eatinpal/modules/auth/domain/repository/auth_repository.dart';
 
 class RegisterParams {
@@ -16,13 +15,13 @@ class RegisterParams {
   });
 }
 
-class RegisterUseCase extends UseCase<UserEntity, RegisterParams> {
+class RegisterUseCase extends UseCase<String, RegisterParams> {
   final AuthRepository _repository;
 
   RegisterUseCase(this._repository);
 
   @override
-  Future<Either<AppException, UserEntity>> call(RegisterParams params) {
+  Future<Either<AppException, String>> call(RegisterParams params) {
     return _repository.register(
       email: params.email,
       password: params.password,

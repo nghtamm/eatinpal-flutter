@@ -33,6 +33,7 @@ const SPACER = Spacer();
 
 // [PADDING]
 abstract final class AppPadding {
+  static const double NONE = 0;
   static const double XS = 4;
   static const double SM = 8;
   static const double MD = 12;
@@ -45,6 +46,7 @@ abstract final class AppPadding {
 
 // [BORDER RADIUS]
 abstract final class AppRadius {
+  static const double NONE = 0;
   static const double XS = 4;
   static const double SM = 8;
   static const double MD = 12;
