@@ -73,15 +73,15 @@ class _LoginViewState extends State<_LoginView> {
         builder: (_, state) => LoadingOverlay(
           isLoading: state is AuthLoading,
           child: Scaffold(
-            backgroundColor: AppColors.NEUTRAL_95,
+            backgroundColor: AppColors.SURFACE,
             appBar: const BasicAppBar(),
             body: SafeArea(
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    Expanded(child: _buildContent()),
-                    _buildBottom(),
+                    Expanded(child: _content()),
+                    _bottom(),
                   ],
                 ),
               ),
@@ -93,21 +93,24 @@ class _LoginViewState extends State<_LoginView> {
   }
 
   void _onStateChanged(BuildContext context, AuthState state) {
-    if (state is AuthSuccess) {
+    if (state is AuthAuthenticated) {
       AppSnackbar.success(context, state.message);
-      context.pop();
+      context.go(RoutePaths.HOME);
     } else if (state is AuthRequiresVerification) {
-      AppSnackbar.warning(context, state.message);
       context.pushReplacement(
         RoutePaths.VERIFY_EMAIL,
-        extra: _emailController.text.trim(),
+        extra: (
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          autoResend: true,
+        ),
       );
     } else if (state is AuthFailure) {
       AppSnackbar.error(context, state.message);
     }
   }
 
-  Widget _buildContent() {
+  Widget _content() {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
         AppPadding.XL,
@@ -118,9 +121,9 @@ class _LoginViewState extends State<_LoginView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTitle(),
+          _title(),
           SIZED_BOX_H12,
-          _buildSubtitle(),
+          _subtitle(),
           SIZED_BOX_H32,
           AuthTextField(
             label: 'EMAIL ADDRESS',
@@ -138,9 +141,7 @@ class _LoginViewState extends State<_LoginView> {
             validator: Validators.loginPassword,
             suffix: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () => setState(
-                () => _obscurePassword = !_obscurePassword,
-              ),
+              onTap: () => setState(() => _obscurePassword = !_obscurePassword),
               child: Padding(
                 padding: const EdgeInsets.all(AppPadding.MD),
                 child: Icon(
@@ -152,27 +153,31 @@ class _LoginViewState extends State<_LoginView> {
             ),
           ),
           SIZED_BOX_H12,
-          _buildForgotPassword(),
+          _forgotPassword(),
         ],
       ),
     );
   }
 
-  Widget _buildTitle() {
+  Widget _title() {
     return Text(
       'WELCOME\nBACK',
-      style: AppTypography.DISPLAY_LARGE.copyWith(fontSize: 44, height: 1.05),
+      style: AppTypography.DISPLAY_LARGE.copyWith(
+        fontSize: 44,
+        height: 1.0,
+        letterSpacing: -1,
+      ),
     );
   }
 
-  Widget _buildSubtitle() {
+  Widget _subtitle() {
     return Text(
       'Log in to EatinPal to continue.',
       style: AppTypography.BODY_MEDIUM.copyWith(color: AppColors.NEUTRAL_40),
     );
   }
 
-  Widget _buildForgotPassword() {
+  Widget _forgotPassword() {
     return Align(
       alignment: Alignment.centerRight,
       child: GestureDetector(
@@ -188,7 +193,7 @@ class _LoginViewState extends State<_LoginView> {
     );
   }
 
-  Widget _buildBottom() {
+  Widget _bottom() {
     return Padding(
       padding: const EdgeInsets.all(AppPadding.XL),
       child: AppButton(label: 'LOGIN', onPressed: _submit, height: 56),

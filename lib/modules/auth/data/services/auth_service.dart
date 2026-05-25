@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:eatinpal/core/network/api_client.dart';
 import 'package:eatinpal/core/network/api_endpoints.dart';
@@ -32,7 +33,7 @@ class AuthService {
     );
   }
 
-  Future<Either<AppException, ApiResult<String>>> register({
+  Future<Either<AppException, ApiResult<void>>> register({
     required String email,
     required String password,
     required String name,
@@ -41,20 +42,30 @@ class AuthService {
       endpoint: ApiEndpoints.REGISTER,
       method: RestMethod.POST,
       data: {'email': email, 'password': password, 'name': name},
-      parser: (data) =>
-          (data as Map<String, dynamic>)['verification_token'] as String,
+      parser: (_) {},
     );
   }
 
-  Future<Either<AppException, ApiResult<String>>> resendVerification({
+  Future<Either<AppException, ApiResult<void>>> resendVerification({
     required String email,
   }) {
     return _client.request(
       endpoint: ApiEndpoints.RESEND_VERIFICATION,
       method: RestMethod.POST,
       data: {'email': email},
-      parser: (data) =>
-          (data as Map<String, dynamic>)['verification_token'] as String,
+      parser: (_) {},
+    );
+  }
+
+  Future<Either<AppException, ApiResult<void>>> verify({
+    required String verificationToken,
+  }) {
+    return _client.request(
+      endpoint: ApiEndpoints.VERIFY,
+      method: RestMethod.GET,
+      query: {'token': verificationToken},
+      headers: {Headers.acceptHeader: Headers.jsonContentType},
+      parser: (_) {},
     );
   }
 

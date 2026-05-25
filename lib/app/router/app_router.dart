@@ -6,62 +6,76 @@ import 'package:eatinpal/core/local/local_storage.dart';
 import 'package:eatinpal/modules/auth/auth.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
+const _DEST_AUTH = {
+  RoutePaths.AUTHENTICATION,
+  RoutePaths.REGISTER,
+  RoutePaths.LOGIN,
+  RoutePaths.VERIFY_EMAIL,
+  RoutePaths.VERIFICATION_SUCCESS,
+};
 
-GoRouter router() {
+GoRouter router({String? initDest = RoutePaths.AUTHENTICATION}) {
   return GoRouter(
     navigatorKey: navigatorKey,
-    initialLocation: RoutePaths.WELCOME,
+    initialLocation: initDest,
     debugLogDiagnostics: true,
     redirect: _guard,
     routes: [
       GoRoute(
-        path: RoutePaths.WELCOME,
-        name: RouteNames.WELCOME,
-        builder: (_, _) => const AuthenticationPage(),
+        path: RoutePaths.AUTHENTICATION,
+        name: RouteNames.AUTHENTICATION,
+        builder: (_, _) {
+          return const AuthenticationPage();
+        },
       ),
       GoRoute(
         path: RoutePaths.REGISTER,
         name: RouteNames.REGISTER,
-        builder: (_, _) => const RegisterPage(),
+        builder: (_, _) {
+          return const RegisterPage();
+        },
       ),
       GoRoute(
         path: RoutePaths.LOGIN,
         name: RouteNames.LOGIN,
-        builder: (_, _) => const LoginPage(),
+        builder: (_, _) {
+          return const LoginPage();
+        },
       ),
       GoRoute(
         path: RoutePaths.VERIFY_EMAIL,
         name: RouteNames.VERIFY_EMAIL,
-        builder: (_, state) =>
-            VerifyEmailPage(email: state.extra as String?),
+        builder: (_, state) {
+          return VerifyEmailPage(args: state.extra as VerifyEmailArgs?);
+        },
       ),
       GoRoute(
         path: RoutePaths.VERIFICATION_SUCCESS,
         name: RouteNames.VERIFICATION_SUCCESS,
-        builder: (_, state) =>
-            VerificationSuccessPage(token: state.extra as String?),
+        builder: (_, state) {
+          return VerificationSuccessPage(token: state.extra as String?);
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.HOME,
+        name: RouteNames.HOME,
+        builder: (_, _) {
+          return const HomePage();
+        },
       ),
     ],
   );
 }
 
 Future<String?> _guard(BuildContext context, GoRouterState state) async {
-  final storage = sl<LocalStorage>();
-  final signed = await storage.signed;
+  final signed = await sl<LocalStorage>().signed;
+  final destAuth = _DEST_AUTH.contains(state.matchedLocation);
 
-  final location = state.matchedLocation;
-  final destSplash = location == RoutePaths.WELCOME;
-  final destAuth =
-      location == RoutePaths.WELCOME ||
-      location == RoutePaths.REGISTER ||
-      location == RoutePaths.LOGIN ||
-      location == RoutePaths.VERIFY_EMAIL ||
-      location == RoutePaths.VERIFICATION_SUCCESS;
-
-  if (destSplash) return signed ? RoutePaths.WELCOME : RoutePaths.WELCOME;
-  if (!signed && !destAuth) return RoutePaths.WELCOME;
-  // TODO: khi có home, uncomment để chặn user đã login vào lại auth routes
-  // if (signed && destAuth) return RoutePaths.HOME;
-
-  return null;
+  if (signed && destAuth) {
+    return RoutePaths.HOME;
+  } else if (!signed && !destAuth) {
+    return RoutePaths.AUTHENTICATION;
+  } else {
+    return null;
+  }
 }

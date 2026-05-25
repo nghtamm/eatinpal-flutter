@@ -3,7 +3,7 @@ import 'package:eatinpal/core/constants/app_colors.dart';
 import 'package:eatinpal/core/constants/app_spacing.dart';
 import 'package:eatinpal/core/constants/app_typography.dart';
 
-enum AppSnackbarType { SUCCESS, WARNING, ERROR }
+enum AppSnackbarType { SUCCESS, INFO, WARNING, ERROR }
 
 abstract final class AppSnackbar {
   static void show(
@@ -20,6 +20,9 @@ abstract final class AppSnackbar {
   static void success(BuildContext context, String message) =>
       show(context, message: message, type: AppSnackbarType.SUCCESS);
 
+  static void info(BuildContext context, String message) =>
+      show(context, message: message, type: AppSnackbarType.INFO);
+
   static void warning(BuildContext context, String message) =>
       show(context, message: message, type: AppSnackbarType.WARNING);
 
@@ -34,6 +37,7 @@ abstract final class AppSnackbar {
   ) {
     final (icon, accent) = switch (type) {
       AppSnackbarType.SUCCESS => (Icons.check_circle, AppColors.PRIMARY),
+      AppSnackbarType.INFO => (Icons.info, AppColors.INFO),
       AppSnackbarType.WARNING => (Icons.warning_rounded, AppColors.WARNING),
       AppSnackbarType.ERROR => (Icons.error, AppColors.TERTIARY_50),
     };

@@ -27,8 +27,13 @@ const SIZED_BOX_W16 = SizedBox(width: 16);
 const SIZED_BOX_W20 = SizedBox(width: 20);
 const SIZED_BOX_W24 = SizedBox(width: 24);
 const SIZED_BOX_W32 = SizedBox(width: 32);
+const SIZED_BOX_W40 = SizedBox(width: 40);
+const SIZED_BOX_W48 = SizedBox(width: 48);
+const SIZED_BOX_W56 = SizedBox(width: 56);
+const SIZED_BOX_W64 = SizedBox(width: 64);
 
 // [SPACER]
+const SPACE_ZERO = SizedBox.shrink();
 const SPACER = Spacer();
 
 // [PADDING]

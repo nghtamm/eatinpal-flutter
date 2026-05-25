@@ -4,6 +4,7 @@ export 'domain/repository/auth_repository.dart';
 export 'domain/usecases/login_usecase.dart';
 export 'domain/usecases/register_usecase.dart';
 export 'domain/usecases/resend_verification_usecase.dart';
+export 'domain/usecases/verify_usecase.dart';
 export 'domain/usecases/verified_login_usecase.dart';
 
 // [DATA]
@@ -22,3 +23,4 @@ export 'presentation/pages/register_page.dart';
 export 'presentation/pages/login_page.dart';
 export 'presentation/pages/verify_email_page.dart';
 export 'presentation/pages/verification_success_page.dart';
+export 'presentation/pages/homepage.dart';

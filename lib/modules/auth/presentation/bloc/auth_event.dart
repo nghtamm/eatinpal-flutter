@@ -41,6 +41,11 @@ class AuthResendVerificationRequested extends AuthEvent {
   List<Object?> get props => [email];
 }
 
-class AuthVerifiedLoginRequested extends AuthEvent {
-  const AuthVerifiedLoginRequested();
+class AuthVerifyFromLinkRequested extends AuthEvent {
+  final String token;
+
+  const AuthVerifyFromLinkRequested(this.token);
+
+  @override
+  List<Object?> get props => [token];
 }

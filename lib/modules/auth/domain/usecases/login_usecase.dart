@@ -17,9 +17,6 @@ class LoginUseCase extends UseCase<String, LoginParams> {
 
   @override
   Future<Either<AppException, String>> call(LoginParams params) {
-    return _repository.login(
-      email: params.email,
-      password: params.password,
-    );
+    return _repository.login(email: params.email, password: params.password);
   }
 }

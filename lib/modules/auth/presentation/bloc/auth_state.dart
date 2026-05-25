@@ -24,6 +24,15 @@ class AuthSuccess extends AuthState {
   List<Object?> get props => [message];
 }
 
+class AuthAuthenticated extends AuthState {
+  final String message;
+
+  const AuthAuthenticated(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class AuthRequiresVerification extends AuthState {
   final String message;
 

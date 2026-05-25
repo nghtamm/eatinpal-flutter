@@ -17,12 +17,10 @@ class ApiClient {
       baseUrl: ApiEndpoints.BASE_URL,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
-      contentType: Headers.jsonContentType,
-      responseType: ResponseType.json,
     );
 
     _dio.interceptors.addAll([
-      AuthInterceptor(_dio, storage),
+      AuthInterceptor(storage),
       LoggingInterceptor(),
     ]);
   }

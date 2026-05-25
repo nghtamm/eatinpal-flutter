@@ -17,5 +17,7 @@ abstract class AuthRepository {
     required String email,
   });
 
-  Future<Either<AppException, String>> verifiedLogin();
+  Future<Either<AppException, String>> verify({required String token});
+
+  Future<Either<AppException, String>> verifiedLogin({required String token});
 }

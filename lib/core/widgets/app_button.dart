@@ -39,9 +39,23 @@ class AppButton extends StatelessWidget {
       ),
     };
 
-    return SizedBox(
+    final shadow = variant == AppButtonVariant.PRIMARY && onPressed != null;
+
+    return Container(
       width: double.infinity,
       height: height,
+      decoration: shadow
+          ? const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(AppRadius.FULL)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.SHADOW_SOFT,
+                  offset: Offset(0, 6),
+                  blurRadius: 14,
+                ),
+              ],
+            )
+          : null,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: bg,
