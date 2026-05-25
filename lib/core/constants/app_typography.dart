@@ -3,31 +3,34 @@ import 'package:eatinpal/core/constants/app_colors.dart';
 import 'package:eatinpal/core/constants/app_fonts.dart';
 
 abstract final class AppTypography {
+  static const Color _ON_SURFACE = AppColors.NEUTRAL_10;
+
   // [DISPLAY] Short, high-emphasis text - hero banners, large numerals
   static const TextStyle DISPLAY_LARGE = TextStyle(
     fontFamily: AppFonts.DISPLAY,
     fontSize: 40,
     fontWeight: FontWeight.w800,
-    height: 1.1,
-    letterSpacing: -0.5,
-    color: AppColors.NEUTRAL_10,
+    height: 1.12,
+    letterSpacing: -0.25,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle DISPLAY_MEDIUM = TextStyle(
     fontFamily: AppFonts.DISPLAY,
     fontSize: 32,
     fontWeight: FontWeight.w800,
-    height: 1.15,
-    letterSpacing: -0.25,
-    color: AppColors.NEUTRAL_10,
+    height: 1.16,
+    letterSpacing: 0,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle DISPLAY_SMALL = TextStyle(
     fontFamily: AppFonts.DISPLAY,
     fontSize: 28,
     fontWeight: FontWeight.w700,
-    height: 1.2,
-    color: AppColors.NEUTRAL_10,
+    height: 1.22,
+    letterSpacing: 0,
+    color: _ON_SURFACE,
   );
 
   // [HEADLINE] Short, high-impact text - page titles, section headers, modals
@@ -36,23 +39,26 @@ abstract final class AppTypography {
     fontSize: 24,
     fontWeight: FontWeight.w700,
     height: 1.25,
-    color: AppColors.NEUTRAL_10,
+    letterSpacing: 0,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle HEADLINE_MEDIUM = TextStyle(
     fontFamily: AppFonts.DISPLAY,
     fontSize: 20,
     fontWeight: FontWeight.w700,
-    height: 1.3,
-    color: AppColors.NEUTRAL_10,
+    height: 1.29,
+    letterSpacing: 0,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle HEADLINE_SMALL = TextStyle(
     fontFamily: AppFonts.DISPLAY,
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    height: 1.35,
-    color: AppColors.NEUTRAL_10,
+    height: 1.33,
+    letterSpacing: 0,
+    color: _ON_SURFACE,
   );
 
   // [TITLE] Medium-emphasis short text - card/list/dialog titles, app bar
@@ -60,26 +66,27 @@ abstract final class AppTypography {
     fontFamily: AppFonts.PRIMARY,
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    height: 1.4,
-    color: AppColors.NEUTRAL_10,
+    height: 1.27,
+    letterSpacing: 0,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle TITLE_MEDIUM = TextStyle(
     fontFamily: AppFonts.PRIMARY,
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    height: 1.4,
+    height: 1.5,
     letterSpacing: 0.15,
-    color: AppColors.NEUTRAL_10,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle TITLE_SMALL = TextStyle(
     fontFamily: AppFonts.PRIMARY,
     fontSize: 14,
     fontWeight: FontWeight.w600,
-    height: 1.4,
+    height: 1.43,
     letterSpacing: 0.1,
-    color: AppColors.NEUTRAL_10,
+    color: _ON_SURFACE,
   );
 
   // [BODY] Long-form reading content - paragraphs, descriptions, articles
@@ -88,26 +95,26 @@ abstract final class AppTypography {
     fontSize: 16,
     fontWeight: FontWeight.w400,
     height: 1.5,
-    letterSpacing: 0.15,
-    color: AppColors.NEUTRAL_10,
+    letterSpacing: 0.5,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle BODY_MEDIUM = TextStyle(
     fontFamily: AppFonts.PRIMARY,
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    height: 1.5,
+    height: 1.43,
     letterSpacing: 0.25,
-    color: AppColors.NEUTRAL_10,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle BODY_SMALL = TextStyle(
     fontFamily: AppFonts.PRIMARY,
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    height: 1.4,
+    height: 1.33,
     letterSpacing: 0.4,
-    color: AppColors.NEUTRAL_10,
+    color: _ON_SURFACE,
   );
 
   // [LABEL] Call-to-action and UI text - buttons, chips, tabs, form labels
@@ -115,26 +122,26 @@ abstract final class AppTypography {
     fontFamily: AppFonts.PRIMARY,
     fontSize: 14,
     fontWeight: FontWeight.w600,
-    height: 1.3,
+    height: 1.43,
     letterSpacing: 0.1,
-    color: AppColors.NEUTRAL_10,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle LABEL_MEDIUM = TextStyle(
     fontFamily: AppFonts.PRIMARY,
     fontSize: 12,
     fontWeight: FontWeight.w600,
-    height: 1.3,
+    height: 1.33,
     letterSpacing: 0.5,
-    color: AppColors.NEUTRAL_10,
+    color: _ON_SURFACE,
   );
 
   static const TextStyle LABEL_SMALL = TextStyle(
     fontFamily: AppFonts.PRIMARY,
     fontSize: 11,
     fontWeight: FontWeight.w600,
-    height: 1.3,
+    height: 1.45,
     letterSpacing: 0.5,
-    color: AppColors.NEUTRAL_10,
+    color: _ON_SURFACE,
   );
 }

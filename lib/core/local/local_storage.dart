@@ -8,24 +8,18 @@ abstract class LocalStorage {
 
   Future<String?> get refreshToken;
 
-  Future<String?> get verificationToken;
-
-  Future<String?> get user;
-
   Future<void> saveCredentialsToken({
     required String accessToken,
     required String refreshToken,
   });
 
-  Future<void> saveVerificationToken(String token);
-
-  Future<void> saveUser(String userJSON);
-
   Future<void> clearCredentialsToken();
 
-  Future<void> clearVerificationToken();
+  Future<String?> get verificationToken;
 
-  Future<void> clearUser();
+  Future<void> saveVerificationToken(String token);
+
+  Future<void> clearVerificationToken();
 
   Future<bool> get signed;
 
@@ -33,9 +27,23 @@ abstract class LocalStorage {
 
   Future<String?> getString(String key);
 
-  Future<void> setBool(String key, {required bool value});
+  Future<void> setBool(String key, bool value);
 
   Future<bool?> getBool(String key);
+
+  Future<void> setInt(String key, int value);
+
+  Future<int?> getInt(String key);
+
+  Future<void> setDouble(String key, double value);
+
+  Future<double?> getDouble(String key);
+
+  Future<void> setStringList(String key, List<String> value);
+
+  Future<List<String>?> getStringList(String key);
+
+  Future<bool> containsKey(String key);
 
   Future<void> remove(String key);
 
@@ -46,14 +54,16 @@ class LocalStorageImpl implements LocalStorage {
   static const _ACCESS_TOKEN_KEY = 'access_token';
   static const _REFRESH_TOKEN_KEY = 'refresh_token';
   static const _VERIFICATION_TOKEN_KEY = 'verification_token';
-  static const _USER_KEY = 'user';
 
   late final FlutterSecureStorage _secure;
   late final SharedPreferences _prefs;
 
   @override
   Future<void> init() async {
-    _secure = const FlutterSecureStorage(aOptions: AndroidOptions());
+    _secure = const FlutterSecureStorage(
+      aOptions: AndroidOptions(),
+      iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+    );
     _prefs = await SharedPreferences.getInstance();
   }
 
@@ -62,13 +72,6 @@ class LocalStorageImpl implements LocalStorage {
 
   @override
   Future<String?> get refreshToken => _secure.read(key: _REFRESH_TOKEN_KEY);
-
-  @override
-  Future<String?> get verificationToken =>
-      _secure.read(key: _VERIFICATION_TOKEN_KEY);
-
-  @override
-  Future<String?> get user async => _prefs.getString(_USER_KEY);
 
   @override
   Future<void> saveCredentialsToken({
@@ -82,16 +85,6 @@ class LocalStorageImpl implements LocalStorage {
   }
 
   @override
-  Future<void> saveVerificationToken(String token) async {
-    await _secure.write(key: _VERIFICATION_TOKEN_KEY, value: token);
-  }
-
-  @override
-  Future<void> saveUser(String userJSON) async {
-    await _prefs.setString(_USER_KEY, userJSON);
-  }
-
-  @override
   Future<void> clearCredentialsToken() async {
     await Future.wait([
       _secure.delete(key: _ACCESS_TOKEN_KEY),
@@ -100,13 +93,17 @@ class LocalStorageImpl implements LocalStorage {
   }
 
   @override
-  Future<void> clearVerificationToken() async {
-    await _secure.delete(key: _VERIFICATION_TOKEN_KEY);
+  Future<String?> get verificationToken =>
+      _secure.read(key: _VERIFICATION_TOKEN_KEY);
+
+  @override
+  Future<void> saveVerificationToken(String token) async {
+    await _secure.write(key: _VERIFICATION_TOKEN_KEY, value: token);
   }
 
   @override
-  Future<void> clearUser() async {
-    await _prefs.remove(_USER_KEY);
+  Future<void> clearVerificationToken() async {
+    await _secure.delete(key: _VERIFICATION_TOKEN_KEY);
   }
 
   @override
@@ -126,13 +123,48 @@ class LocalStorageImpl implements LocalStorage {
   }
 
   @override
-  Future<void> setBool(String key, {required bool value}) async {
+  Future<void> setBool(String key, bool value) async {
     await _prefs.setBool(key, value);
   }
 
   @override
   Future<bool?> getBool(String key) async {
     return _prefs.getBool(key);
+  }
+
+  @override
+  Future<void> setInt(String key, int value) async {
+    await _prefs.setInt(key, value);
+  }
+
+  @override
+  Future<int?> getInt(String key) async {
+    return _prefs.getInt(key);
+  }
+
+  @override
+  Future<void> setDouble(String key, double value) async {
+    await _prefs.setDouble(key, value);
+  }
+
+  @override
+  Future<double?> getDouble(String key) async {
+    return _prefs.getDouble(key);
+  }
+
+  @override
+  Future<void> setStringList(String key, List<String> value) async {
+    await _prefs.setStringList(key, value);
+  }
+
+  @override
+  Future<List<String>?> getStringList(String key) async {
+    return _prefs.getStringList(key);
+  }
+
+  @override
+  Future<bool> containsKey(String key) async {
+    return _prefs.containsKey(key);
   }
 
   @override

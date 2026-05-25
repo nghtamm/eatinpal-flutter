@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:fpdart/fpdart.dart';
 import 'package:eatinpal/core/local/local_storage.dart';
 import 'package:eatinpal/core/network/exceptions.dart';
@@ -25,9 +23,6 @@ class AuthRepositoryImpl implements AuthRepository {
         refreshToken: right.data.tokens.refreshToken,
       );
 
-      final userJSON = jsonEncode(right.data.user.toJson());
-      await _storage.saveUser(userJSON);
-
       return Right(right.message);
     });
   }
@@ -43,11 +38,8 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
       name: name,
     );
-    
-    return result.fold((left) async => Left(left), (right) async {
-      await _storage.saveVerificationToken(right.data);
-      return Right(right.message);
-    });
+
+    return result.fold((left) => Left(left), (right) => Right(right.message));
   }
 
   @override
@@ -56,27 +48,27 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     final result = await _service.resendVerification(email: email);
 
-    return result.fold((left) async => Left(left), (right) async {
-      await _storage.saveVerificationToken(right.data);
-      return Right(right.message);
-    });
+    return result.fold((left) => Left(left), (right) => Right(right.message));
   }
 
   @override
-  Future<Either<AppException, String>> verifiedLogin() async {
-    final token = await _storage.verificationToken;
-    final result = await _service.verifiedLogin(verificationToken: token ?? '');
+  Future<Either<AppException, String>> verify({required String token}) async {
+    final result = await _service.verify(verificationToken: token);
+
+    return result.fold((left) => Left(left), (right) => Right(right.message));
+  }
+
+  @override
+  Future<Either<AppException, String>> verifiedLogin({
+    required String token,
+  }) async {
+    final result = await _service.verifiedLogin(verificationToken: token);
 
     return result.fold((left) async => Left(left), (right) async {
       await _storage.saveCredentialsToken(
         accessToken: right.data.tokens.accessToken,
         refreshToken: right.data.tokens.refreshToken,
       );
-
-      final userJSON = jsonEncode(right.data.user.toJson());
-      await _storage.saveUser(userJSON);
-
-      await _storage.clearVerificationToken();
 
       return Right(right.message);
     });

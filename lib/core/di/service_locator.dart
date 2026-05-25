@@ -1,8 +1,11 @@
+import 'package:app_links/app_links.dart';
 import 'package:dio/dio.dart';
-import 'package:get_it/get_it.dart';
+import 'package:eatinpal/app/router/app_router.dart';
+import 'package:eatinpal/core/deeplink/deeplink_service.dart';
 import 'package:eatinpal/core/local/local_storage.dart';
 import 'package:eatinpal/core/network/api_client.dart';
 import 'package:eatinpal/modules/auth/auth.dart';
+import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
 
@@ -12,41 +15,49 @@ Future<void> initDependencies() async {
 }
 
 Future<void> _initCore() async {
-  // Local Storage
+  // [LOCAL STORAGE]
   final storage = LocalStorageImpl();
   await storage.init();
   sl.registerSingleton<LocalStorage>(storage);
 
-  // Network
+  // [NETWORK]
   sl.registerLazySingleton<Dio>(() => Dio());
   sl.registerLazySingleton<ApiClient>(
     () => ApiClient(sl<Dio>(), sl<LocalStorage>()),
   );
+
+  // [DEEP LINKING]
+  sl.registerLazySingleton<AppLinks>(() => AppLinks());
+  sl.registerLazySingleton<DeepLinkService>(
+    () => DeepLinkService(navigatorKey, sl<AppLinks>(), sl<LocalStorage>()),
+  );
 }
 
 void _initAuth() {
-  // Services
+  // [SERVICES]
   sl.registerLazySingleton(() => AuthService(sl<ApiClient>()));
 
-  // Repositories
+  // [REPOSITORIES]
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(sl<AuthService>(), sl<LocalStorage>()),
   );
 
-  // Usecases
+  // [USECASES]
   sl.registerLazySingleton(() => LoginUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => RegisterUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(
     () => ResendVerificationUseCase(sl<AuthRepository>()),
   );
+  sl.registerLazySingleton(() => VerifyUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => VerifiedLoginUseCase(sl<AuthRepository>()));
 
-  // Blocs
+  // [BLOCS]
   sl.registerFactory(
     () => AuthBloc(
       register: sl<RegisterUseCase>(),
       login: sl<LoginUseCase>(),
       resendVerification: sl<ResendVerificationUseCase>(),
+      verify: sl<VerifyUseCase>(),
       verifiedLogin: sl<VerifiedLoginUseCase>(),
     ),
   );

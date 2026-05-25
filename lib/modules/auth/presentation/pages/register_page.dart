@@ -15,6 +15,7 @@ import 'package:eatinpal/modules/auth/presentation/bloc/auth_bloc.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_event.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_state.dart';
 import 'package:eatinpal/modules/auth/presentation/widgets/auth_textfield.dart';
+import 'package:eatinpal/modules/auth/presentation/widgets/password_strength.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -76,15 +77,15 @@ class _RegisterViewState extends State<_RegisterView> {
         builder: (_, state) => LoadingOverlay(
           isLoading: state is AuthLoading,
           child: Scaffold(
-            backgroundColor: AppColors.NEUTRAL_95,
+            backgroundColor: AppColors.SURFACE,
             appBar: const BasicAppBar(),
             body: SafeArea(
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    Expanded(child: _buildContent()),
-                    _buildBottom(),
+                    Expanded(child: _content()),
+                    _bottom(),
                   ],
                 ),
               ),
@@ -100,11 +101,18 @@ class _RegisterViewState extends State<_RegisterView> {
       AppSnackbar.error(context, state.message);
     } else if (state is AuthSuccess) {
       AppSnackbar.success(context, state.message);
-      context.pushReplacement(RoutePaths.VERIFY_EMAIL);
+      context.pushReplacement(
+        RoutePaths.VERIFY_EMAIL,
+        extra: (
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          autoResend: false,
+        ),
+      );
     }
   }
 
-  Widget _buildContent() {
+  Widget _content() {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
         AppPadding.XL,
@@ -115,9 +123,9 @@ class _RegisterViewState extends State<_RegisterView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTitle(),
+          _title(),
           SIZED_BOX_H12,
-          _buildSubtitle(),
+          _subtitle(),
           SIZED_BOX_H32,
           AuthTextField(
             label: 'FULL NAME',
@@ -145,9 +153,7 @@ class _RegisterViewState extends State<_RegisterView> {
                 'At least 8 characters, with 1 uppercase, 1 lowercase, 1 number and 1 special character.',
             suffix: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () => setState(
-                () => _obscurePassword = !_obscurePassword,
-              ),
+              onTap: () => setState(() => _obscurePassword = !_obscurePassword),
               child: Padding(
                 padding: const EdgeInsets.all(AppPadding.MD),
                 child: Icon(
@@ -158,43 +164,44 @@ class _RegisterViewState extends State<_RegisterView> {
               ),
             ),
           ),
+          PasswordStrength(controller: _passwordController),
         ],
       ),
     );
   }
 
-  Widget _buildTitle() {
+  Widget _title() {
     return Text(
       'JOIN\nEATINPAL',
-      style: AppTypography.DISPLAY_LARGE.copyWith(fontSize: 44, height: 1.05),
+      style: AppTypography.DISPLAY_LARGE.copyWith(
+        fontSize: 44,
+        height: 1.0,
+        letterSpacing: -1,
+      ),
     );
   }
 
-  Widget _buildSubtitle() {
+  Widget _subtitle() {
     return Text(
       'Create an account to begin your journey toward healthier meals and more mindful habits.',
       style: AppTypography.BODY_MEDIUM.copyWith(color: AppColors.NEUTRAL_40),
     );
   }
 
-  Widget _buildBottom() {
+  Widget _bottom() {
     return Padding(
       padding: const EdgeInsets.all(AppPadding.XL),
       child: Column(
         children: [
-          AppButton(
-            label: 'CREATE ACCOUNT',
-            onPressed: _submit,
-            height: 56,
-          ),
+          AppButton(label: 'CREATE ACCOUNT', onPressed: _submit, height: 56),
           SIZED_BOX_H12,
-          _buildLoginLink(),
+          _loginLink(),
         ],
       ),
     );
   }
 
-  Widget _buildLoginLink() {
+  Widget _loginLink() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

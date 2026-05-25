@@ -29,7 +29,7 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(AppRadius.SM);
+    final radius = BorderRadius.circular(AppRadius.BASE);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,6 +50,7 @@ class AuthTextField extends StatelessWidget {
           obscureText: obscureText,
           autovalidateMode: autovalidateMode,
           validator: validator,
+          cursorColor: AppColors.PRIMARY,
           style: AppTypography.BODY_LARGE.copyWith(
             fontFeatures: const [FontFeature('calt', 0)],
           ),
@@ -59,22 +60,25 @@ class AuthTextField extends StatelessWidget {
               color: AppColors.NEUTRAL_60,
             ),
             filled: true,
-            fillColor: AppColors.NEUTRAL_90,
+            fillColor: AppColors.FIELD_FILL,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: AppPadding.BASE,
               vertical: AppPadding.BASE,
             ),
             border: OutlineInputBorder(
               borderRadius: radius,
-              borderSide: BorderSide.none,
+              borderSide: const BorderSide(color: AppColors.BORDER_SOFT),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: radius,
-              borderSide: BorderSide.none,
+              borderSide: const BorderSide(color: AppColors.BORDER_SOFT),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: radius,
-              borderSide: const BorderSide(color: AppColors.PRIMARY, width: 2),
+              borderSide: const BorderSide(
+                color: AppColors.PRIMARY,
+                width: 1.5,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: radius,
@@ -84,7 +88,7 @@ class AuthTextField extends StatelessWidget {
               borderRadius: radius,
               borderSide: const BorderSide(
                 color: AppColors.TERTIARY_50,
-                width: 2,
+                width: 1.5,
               ),
             ),
             helperText: helperText,
