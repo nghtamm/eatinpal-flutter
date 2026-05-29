@@ -5,10 +5,10 @@ import 'package:eatinpal/core/network/api_endpoints.dart';
 import 'package:eatinpal/core/network/api_methods.dart';
 import 'package:eatinpal/core/network/api_result.dart';
 import 'package:eatinpal/core/network/exceptions.dart';
-import 'package:eatinpal/modules/auth/data/models/tokens_model.dart';
+import 'package:eatinpal/modules/auth/data/models/credentials_model.dart';
 import 'package:eatinpal/modules/auth/data/models/user_model.dart';
 
-typedef LoginResponse = ({UserModel user, TokensModel tokens});
+typedef LoginResponse = ({UserModel user, CredentialsModel credentials});
 
 class AuthService {
   final ApiClient _client;
@@ -24,10 +24,9 @@ class AuthService {
       method: RestMethod.POST,
       data: {'email': email, 'password': password},
       parser: (data) {
-        final map = data as Map<String, dynamic>;
         return (
-          user: UserModel.fromJson(map['user'] as Map<String, dynamic>),
-          tokens: TokensModel.fromJson(map['tokens'] as Map<String, dynamic>),
+          user: UserModel.fromJson(data['user']),
+          credentials: CredentialsModel.fromJson(data['tokens']),
         );
       },
     );
@@ -46,11 +45,11 @@ class AuthService {
     );
   }
 
-  Future<Either<AppException, ApiResult<void>>> resendVerification({
+  Future<Either<AppException, ApiResult<void>>> resend({
     required String email,
   }) {
     return _client.request(
-      endpoint: ApiEndpoints.RESEND_VERIFICATION,
+      endpoint: ApiEndpoints.RESEND,
       method: RestMethod.POST,
       data: {'email': email},
       parser: (_) {},
@@ -69,18 +68,17 @@ class AuthService {
     );
   }
 
-  Future<Either<AppException, ApiResult<LoginResponse>>> verifiedLogin({
+  Future<Either<AppException, ApiResult<LoginResponse>>> magicLink({
     required String verificationToken,
   }) {
     return _client.request(
-      endpoint: ApiEndpoints.VERIFIED_LOGIN,
+      endpoint: ApiEndpoints.MAGIC_LINK,
       method: RestMethod.POST,
       data: {'verification_token': verificationToken},
       parser: (data) {
-        final map = data as Map<String, dynamic>;
         return (
-          user: UserModel.fromJson(map['user'] as Map<String, dynamic>),
-          tokens: TokensModel.fromJson(map['tokens'] as Map<String, dynamic>),
+          user: UserModel.fromJson(data['user']),
+          credentials: CredentialsModel.fromJson(data['tokens']),
         );
       },
     );

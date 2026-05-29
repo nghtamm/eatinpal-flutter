@@ -38,7 +38,7 @@ Before opening a PR or merging. Reviews BOTH architecture compliance (rules in `
    - **`function-length`** — target ~100 lines; ~300 is soft upper bound. Flag only when significantly above without cohesion.
    - **`code-generators`** — freezed + json_serializable + build_runner are ALLOWED for `data/models/`. `*.freezed.dart` / `*.g.dart` must be committed. Flag freezed on BLoC events/states, freezed on entities, or unannounced new codegen.
    - **`modular-structure`** — modules don't import each other's internal files (cross-module via barrel only, and ideally not at all — lift to `core/`). Every module has the 3-layer `data/`/`domain/`/`presentation/` shape and a barrel `<name>.dart`. No barrels inside sub-folders.
-   - **`state-management`** — BLoC with Equatable (NOT freezed). DI via `sl<T>()` (get_it). Navigation via `go_router` (`context.go`/`push`/`pop`/`pushReplacement`). Dialogs via `showDialog`; sheets via `showModalBottomSheet`; snackbars via `AppSnackbar.success/info/warning/error`. NO Provider/Riverpod/MobX/GetX. Either unwrap via `.fold((left), (right))` — params named `left`/`right`. Avoid `switch (result) { case Left ... case Right }`. Single-field usecase params pass primitive (no wrapper class).
+   - **`state-management`** — BLoC with Equatable (NOT freezed). DI via `di<T>()` (get_it). Navigation via `go_router` (`context.go`/`push`/`pop`/`pushReplacement`). Dialogs via `showDialog`; sheets via `showModalBottomSheet`; snackbars via `AppSnackbar.success/info/warning/error`. NO Provider/Riverpod/MobX/GetX. Either unwrap via `.fold((left), (right))` — params named `left`/`right`. Avoid `switch (result) { case Left ... case Right }`. Single-field usecase params pass primitive (no wrapper class).
    - **`import-rules`** — order `dart:` → `package:` → relative, sorted, no unused. Treat `unused_import` as error. No cross-module file imports — barrel only.
    - **`hands-off`** — foundation files (see `.claude/rules/hands-off.md`) unchanged unless explicitly authorized.
    - **`trailing-commas`** — multi-line argument/parameter/collection literals end with trailing comma.
@@ -49,6 +49,10 @@ Before opening a PR or merging. Reviews BOTH architecture compliance (rules in `
    - **Error handling at boundaries** — covers real failure modes without swallowing.
    - **Comments** — only where the WHY is non-obvious; flag noise comments (what-comments, task-comments, `// removed` markers).
    - **Test coverage** — flag uncovered critical paths (BLoC transitions, repository unwrap, service error map).
+   - **Security** — no hardcoded secrets / tokens / keys (use `flutter_secure_storage` / env via dotenv, never source or logs); user input validated before use; no PII in logs.
+   - **Type safety** — flag gratuitous `dynamic`, unsafe `as` casts, and force-unwrap `!` where null is realistically possible; prefer explicit parsing in `fromJson`.
+   - **Async hygiene** — flag unawaited `Future`s, undisposed `StreamSubscription` / `TextEditingController` / `AnimationController` / `ScrollController`, and `BuildContext` used across an `await` without a `context.mounted` guard.
+   - **Task vs plan** — if a plan is in scope, check the diff covers each planned item; flag planned items with no corresponding change.
 
 4. Run `fvm flutter analyze` and capture any new warnings.
 5. Run `fvm dart format --set-exit-if-changed .`; flag files that would be reformatted.
@@ -127,6 +131,7 @@ grep -rnE 'SizedBox\(\s*(height|width):\s*[0-9]'             lib/modules # raw S
 - **Harness sync (principle 7)** — if `git diff` renames/removes a class or path that `CLAUDE.md` / `docs/` / `.claude/rules/` references BY NAME, those harness files must update in the same commit. FAIL if drifted.
 - **Scope creep (principle 4)** — if the diff mixes unrelated changes, suggest splitting.
 - **Lean harness (principle 8)** — if a `.md` edit adds verbose narrative that doesn't change agent behavior, suggest trimming.
+- **YAGNI / KISS / DRY (advisory)** — as a secondary lens, note opportunities where code could be simpler, where logic is duplicated (cross-reference `shared-defs`), or where abstraction appears premature. Surface these as `⚠ WARN` suggestions, not hard fails. Don't block the diff; do flag it so the team can decide.
 
 ## Auto-fix policy
 

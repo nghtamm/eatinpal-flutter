@@ -165,7 +165,7 @@ import 'package:eatinpal/core/network/api_endpoints.dart';
 import 'package:eatinpal/core/network/api_methods.dart';
 import 'package:eatinpal/core/network/api_result.dart';
 import 'package:eatinpal/core/network/exceptions.dart';
-import 'package:eatinpal/modules/auth/data/models/tokens_model.dart';
+import 'package:eatinpal/modules/auth/data/models/credentials_model.dart';
 import 'package:eatinpal/modules/auth/data/models/user_model.dart';
 import 'package:fpdart/fpdart.dart';
 ```
@@ -540,18 +540,18 @@ When a usecase takes only ONE field, pass the primitive directly. Do NOT wrap it
 
 ```dart
 // ✅ Single field — primitive directly
-class ResendVerificationUseCase extends UseCase<String, String> {
+class ResendUseCase extends UseCase<String, String> {
   final AuthRepository _repository;
-  ResendVerificationUseCase(this._repository);
+  ResendUseCase(this._repository);
 
   @override
   Future<Either<AppException, String>> call(String email) {
-    return _repository.resendVerification(email: email);
+    return _repository.resend(email: email);
   }
 }
 
 // Call site
-final result = await resendVerification(email);
+final result = await resend(email);
 ```
 
 ```dart
@@ -560,7 +560,7 @@ class ResendParams {
   final String email;
   const ResendParams({required this.email});
 }
-class ResendVerificationUseCase extends UseCase<String, ResendParams> { ... }
+class ResendUseCase extends UseCase<String, ResendParams> { ... }
 ```
 
 Multi-field params still get a class (`LoginParams`, `RegisterParams`):

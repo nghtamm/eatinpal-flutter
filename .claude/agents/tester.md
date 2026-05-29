@@ -44,11 +44,13 @@ Triggers: "add tests for X", "write a regression test for Y", "/test".
    - **Widget** — `pumpWidget` + `find` + `expect`. Wrap with `MaterialApp` + `BlocProvider.value` and inject a fake BLoC.
    - **Integration** — multi-screen flows (rare; request explicitly).
 2. Place the test file mirroring the source: `lib/foo/bar.dart` → `test/foo/bar_test.dart`.
-3. For **services**: register a fake `ApiClient` via `GetIt.allowReassignment = true; sl.registerSingleton<ApiClient>(FakeApiClient())`; verify the service forwards the right method/path/params.
+3. For **services**: register a fake `ApiClient` via `GetIt.allowReassignment = true; di.registerSingleton<ApiClient>(FakeApiClient())`; verify the service forwards the right method/path/params.
 4. For **repositories**: mock the service interface; assert correct `Either` branches.
 5. For **BLoCs**: use `bloc_test` package — exercise events, assert state sequence with Equatable equality.
 6. For **widgets**: provide a fake BLoC via `BlocProvider.value(value: FakeBloc())`; `pumpWidget(MaterialApp(home: ...))`. Pump until idle (`tester.pumpAndSettle()`) for animated transitions.
 7. Run `fvm flutter test test/foo/bar_test.dart`. Iterate until green.
+8. **Cover the boundaries** — for each unit, test at least: null / missing field, empty collection, boundary numbers (0, negative, max), and the error path (`Left(AppException)` → bloc emits the failure state, no crash). Happy-path-only is incomplete.
+9. **Coverage check** — run `fvm flutter test --coverage` and scan `coverage/lcov.info` for critical paths (bloc branches, parsers, error handling) left uncovered. Report the gaps and propose the missing cases — don't enforce a hard percentage.
 
 NO testing of framework internals (bloc, get_it, Dio). NO snapshot tests unless requested.
 

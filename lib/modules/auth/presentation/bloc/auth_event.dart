@@ -32,10 +32,10 @@ class AuthLoginSubmitted extends AuthEvent {
   List<Object?> get props => [email, password];
 }
 
-class AuthResendVerificationRequested extends AuthEvent {
+class AuthResendRequested extends AuthEvent {
   final String email;
 
-  const AuthResendVerificationRequested(this.email);
+  const AuthResendRequested(this.email);
 
   @override
   List<Object?> get props => [email];

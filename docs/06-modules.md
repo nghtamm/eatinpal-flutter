@@ -73,13 +73,13 @@ export 'domain/entities/user_entity.dart';
 export 'domain/repository/auth_repository.dart';
 export 'domain/usecases/login_usecase.dart';
 export 'domain/usecases/register_usecase.dart';
-export 'domain/usecases/resend_verification_usecase.dart';
+export 'domain/usecases/resend_usecase.dart';
 export 'domain/usecases/verify_usecase.dart';
-export 'domain/usecases/verified_login_usecase.dart';
+export 'domain/usecases/magic_link_usecase.dart';
 
 // [DATA]
 export 'data/models/user_model.dart';
-export 'data/models/tokens_model.dart';
+export 'data/models/credentials_model.dart';
 export 'data/services/auth_service.dart';
 export 'data/repository/auth_repository_impl.dart';
 
@@ -167,12 +167,12 @@ Plus:
   }
 
   void _initFood() {
-    sl.registerLazySingleton(() => FoodService(sl<ApiClient>()));
-    sl.registerLazySingleton<FoodRepository>(
-      () => FoodRepositoryImpl(sl<FoodService>()),
+    di.registerLazySingleton(() => FoodService(di<ApiClient>()));
+    di.registerLazySingleton<FoodRepository>(
+      () => FoodRepositoryImpl(di<FoodService>()),
     );
-    sl.registerLazySingleton(() => GetFoodListUseCase(sl<FoodRepository>()));
-    sl.registerFactory(() => FoodListBloc(getList: sl<GetFoodListUseCase>()));
+    di.registerLazySingleton(() => GetFoodListUseCase(di<FoodRepository>()));
+    di.registerFactory(() => FoodListBloc(getList: di<GetFoodListUseCase>()));
   }
   ```
 
@@ -492,7 +492,7 @@ class FoodListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<FoodListBloc>()..add(const FoodListStarted()),
+      create: (_) => di<FoodListBloc>()..add(const FoodListStarted()),
       child: const _FoodListView(),
     );
   }
@@ -599,7 +599,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<AuthBloc>(),
+      create: (_) => di<AuthBloc>(),
       child: const _LoginView(),
     );
   }
@@ -735,14 +735,14 @@ Key disciplines:
 Sometimes you need a one-off: a new endpoint on an existing module, a tweak to an existing screen.
 
 - **New endpoint on an existing module:** add to `ApiEndpoints`, add a method to the service, add a method to the repository interface + impl, add a usecase, register the usecase, add an event to the existing BLoC.
-- **New screen reusing existing BLoC:** add the route + page; the page uses `BlocProvider.value` (if sharing the same instance up the tree) or `BlocProvider(create: (_) => sl<...>())` (fresh instance).
+- **New screen reusing existing BLoC:** add the route + page; the page uses `BlocProvider.value` (if sharing the same instance up the tree) or `BlocProvider(create: (_) => di<...>())` (fresh instance).
 - **Tweak existing UI:** view-only edit. No BLoC changes.
 
 ## Common pitfalls
 
 - **Forgot the per-module barrel** — composition root can't find module types. Always emit `<name>/<name>.dart`.
 - **Module A imports module B's internals (not the barrel)** — even with the barrel, prefer to lift the shared piece to `core/`.
-- **Forgot to register a new usecase / BLoC in `service_locator.dart`** — `sl<...>()` throws "Type not registered".
+- **Forgot to register a new usecase / BLoC in `service_locator.dart`** — `di<...>()` throws "Type not registered".
 - **Registered BLoC as `lazySingleton`** — state persists across page entries. Always use `registerFactory` for BLoCs.
 - **`data` imports `presentation`** — wrong direction; pull the dependency into `domain` or refactor.
 - **Service throws on HTTP error instead of returning `Left`** — `ApiClient.request` catches `DioException`. Don't bypass it.

@@ -2,44 +2,42 @@ import 'package:dio/dio.dart';
 import 'package:eatinpal/core/network/exceptions.dart';
 
 abstract final class ErrorHandler {
-  static const _MSG_INVALID_REQUEST =
-      "We couldn't process this request. Please try again.";
-  static const _MSG_SESSION_EXPIRED =
-      'Your session has expired. Please log in again.';
-  static const _MSG_SERVICE_UNAVAILABLE =
-      'Service is temporarily unavailable. Please try again shortly.';
-  static const _MSG_TIMEOUT =
-      'The request took too long. Please check your connection and try again.';
-  static const _MSG_CANCEL = 'The request was cancelled.';
-  static const _MSG_NO_INTERNET =
-      'No internet connection. Please check your network.';
-  static const _MSG_UNEXPECTED = 'Something went wrong. Please try again.';
-
   static AppException handle(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return const TimeoutException(message: _MSG_TIMEOUT);
+        return const TimeoutException(
+          message: 'Connection timed out. Please try again.',
+        );
 
       case DioExceptionType.cancel:
-        return const CancelException(message: _MSG_CANCEL);
+        return const CancelException(
+          message: 'The request was cancelled. Please try again.',
+        );
 
       case DioExceptionType.connectionError:
-        return const NoInternetException(message: _MSG_NO_INTERNET);
+        return const NoInternetException(
+          message:
+              'No internet connection. Please check your connection and try again.',
+        );
 
       case DioExceptionType.badResponse:
-        return _handleBadResponse(error.response);
+        return _handleErrResponse(error.response);
 
       case DioExceptionType.badCertificate:
-        return const NetworkException(message: _MSG_UNEXPECTED);
+        return const NetworkException(
+          message: 'An error occurred unexpectedly. Please try again later.',
+        );
 
       case DioExceptionType.unknown:
-        return const NetworkException(message: _MSG_UNEXPECTED);
+        return const NetworkException(
+          message: 'An error occurred unexpectedly. Please try again later.',
+        );
     }
   }
 
-  static AppException _handleBadResponse(Response? response) {
+  static AppException _handleErrResponse(Response? response) {
     final statusCode = response?.statusCode;
     final data = response?.data;
     final message = _extractMessage(data);
@@ -47,67 +45,87 @@ abstract final class ErrorHandler {
     switch (statusCode) {
       case 400:
         return BadRequestException(
-          message: message ?? _MSG_INVALID_REQUEST,
+          message:
+              message ??
+              'An error occurred unexpectedly. Please try again later.',
           data: data,
         );
       case 401:
         return UnauthorizedException(
-          message: message ?? _MSG_SESSION_EXPIRED,
+          message: message ?? 'Your session has expired. Please log in again.',
           data: data,
         );
       case 403:
         return ForbiddenException(
-          message: message ?? _MSG_SESSION_EXPIRED,
+          message:
+              message ??
+              '''You don't have permission to perform this action.''',
           data: data,
         );
       case 404:
         return NotFoundException(
-          message: message ?? _MSG_INVALID_REQUEST,
+          message: message ?? 'The requested resource was not found.',
           data: data,
         );
       case 406:
         return NotAcceptableException(
-          message: message ?? _MSG_INVALID_REQUEST,
+          message:
+              message ??
+              'An error occurred unexpectedly. Please try again later.',
           data: data,
         );
       case 408:
         return RequestTimeoutException(
-          message: message ?? _MSG_SERVICE_UNAVAILABLE,
+          message: message ?? 'Connection timed out. Please try again.',
           data: data,
         );
       case 409:
         return ConflictException(
-          message: message ?? _MSG_INVALID_REQUEST,
+          message:
+              message ??
+              'An error occurred unexpectedly. Please try again later.',
           data: data,
         );
       case 413:
         return PayloadTooLargeException(
-          message: message ?? _MSG_INVALID_REQUEST,
+          message:
+              message ??
+              'File size limit exceeded. Please choose a smaller file and try again.',
           data: data,
         );
       case 500:
         return InternalServerErrorException(
-          message: message ?? _MSG_SERVICE_UNAVAILABLE,
+          message:
+              message ??
+              'An error occurred unexpectedly. Please try again later.',
           data: data,
         );
       case 502:
         return BadGatewayException(
-          message: message ?? _MSG_SERVICE_UNAVAILABLE,
+          message:
+              message ??
+              'An error occurred unexpectedly. Please try again later.',
           data: data,
         );
       case 503:
         return ServiceUnavailableException(
-          message: message ?? _MSG_SERVICE_UNAVAILABLE,
+          message:
+              message ??
+              'An error occurred unexpectedly. Please try again later.',
           data: data,
         );
       case 504:
         return GatewayTimeoutException(
-          message: message ?? _MSG_SERVICE_UNAVAILABLE,
+          message:
+              message ??
+              'An error occurred unexpectedly. Please try again later.',
           data: data,
         );
       default:
         return NetworkException(
-          message: message ?? _MSG_UNEXPECTED,
+          message:
+              message ??
+              'An error occurred unexpectedly. Please try again later.',
           statusCode: statusCode,
           data: data,
         );

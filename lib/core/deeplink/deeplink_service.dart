@@ -4,7 +4,6 @@ import 'package:app_links/app_links.dart';
 import 'package:eatinpal/app/router/route_names.dart';
 import 'package:eatinpal/core/helpers/jwt.dart';
 import 'package:eatinpal/core/local/local_storage.dart';
-import 'package:eatinpal/core/widgets/app_snackbar.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,11 +36,7 @@ class DeepLinkService {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ctx = _navigatorKey.currentContext;
       if (ctx == null) return;
-
-      if (isJWTExpired(token)) {
-        AppSnackbar.error(ctx, 'There was an error verifying your email.');
-        return;
-      }
+      if (isJWTExpired(token)) return;
       ctx.go(RoutePaths.VERIFICATION_SUCCESS, extra: token);
     });
   }

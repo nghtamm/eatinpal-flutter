@@ -20,7 +20,7 @@ EatinPal does not currently have a network-aware connectivity service. This skil
 
 | Concern | Lives at |
 |---|---|
-| Persistence | `LocalStorage.setString` / `getString` / `setBool` / etc. (via `sl<LocalStorage>()`) |
+| Persistence | `LocalStorage.setString` / `getString` / `setBool` / etc. (via `di<LocalStorage>()`) |
 | Error type | `NoInternetException` (from `lib/core/network/exceptions.dart`) |
 | User feedback | `AppSnackbar.warning(context, 'No internet…')` |
 | Refresh trigger | `RefreshIndicator` on list pages |

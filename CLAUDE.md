@@ -7,7 +7,7 @@ Mobile app (Android + iOS only) for tracking daily calories and nutrition, simil
 | Concern | Package |
 |---|---|
 | State management | `flutter_bloc` (events/states with `Equatable`, NEVER freezed) |
-| DI | `get_it` (instance `sl` in `lib/core/di/service_locator.dart`) |
+| DI | `get_it` (instance `di` in `lib/core/di/service_locator.dart`) |
 | HTTP | `dio` + custom `ApiClient` wrapper (`lib/core/network/api_client.dart`) |
 | Routing | `go_router` (routes in `lib/app/router/`) |
 | Functional / error handling | `fpdart` — `Either<AppException, T>` |
@@ -33,7 +33,7 @@ lib/
 │       └── route_names.dart        # RoutePaths + RouteNames
 ├── core/                           # shared, NO barrel export — import individual files
 │   ├── constants/                  # AppColors, AppSpacing/AppPadding/AppRadius, AppTypography, AppTheme, AppFonts
-│   ├── di/                         # service_locator.dart (GetIt instance `sl`)
+│   ├── di/                         # service_locator.dart (GetIt instance `di`)
 │   ├── deeplink/                   # DeepLinkService (warm + cold-start)
 │   ├── helpers/                    # extensions, validators, jwt
 │   ├── local/                      # LocalStorage interface + LocalStorageImpl
@@ -63,9 +63,9 @@ Full layering rules, hands-off boundary, and bootstrap sequence: `docs/01-archit
 3. **Models — freezed + json_serializable, extending entity.** Data models live in `data/models/`, extend / implement the matching entity in `domain/entities/`. Generated `*.freezed.dart` / `*.g.dart` committed to git. Re-run `fvm dart run build_runner build --delete-conflicting-outputs` after editing freezed sources. (`docs/02-conventions.md`)
 4. **BLoC — never freezed.** Events and states are regular classes with `Equatable`, override `props`. Two styles: A (multi-class, divergent shapes — default) or B (single-class with enum status — shared fields). (`docs/03-state-routing.md`)
 5. **Modular structure.** Every feature at `lib/modules/<name>/` with `data/`, `domain/`, `presentation/`. Mandatory per-module barrel `<name>.dart` re-exporting public surface. No barrels inside sub-folders. No top-level `modules.dart`. Modules MUST NOT import each other — lift to `core/` instead. (`docs/06-modules.md`)
-6. **Networking.** All API calls go through services that call `sl<ApiClient>().request(...)` and return `Future<Either<AppException, ApiResult<T>>>`. Repositories unwrap and return `Either<AppException, T>`. `RestMethod.GET/POST/PUT/PATCH/DELETE` (enum values are `UPPER_SNAKE_CASE`). Envelope auto-extracted by `ApiClient._unwrap`. (`docs/04-networking.md`)
+6. **Networking.** All API calls go through services that call their injected `ApiClient` (e.g. `_client.request(endpoint: ...)`) and return `Future<Either<AppException, ApiResult<T>>>`. Repositories unwrap and return `Either<AppException, T>`. `RestMethod.GET/POST/PUT/PATCH/DELETE` (enum values are `UPPER_SNAKE_CASE`). Envelope auto-extracted by `ApiClient._unwrap`. (`docs/04-networking.md`)
 7. **fpdart Either.** Unwrap with `.fold((left) => ..., (right) => ...)` — always name params `left` / `right`, NOT domain names. Avoid `switch (result) { case Left ... case Right }` pattern. For single-field usecase params, skip the wrapper class — pass the primitive directly. (`docs/02-conventions.md`)
-8. **State + routing.** `flutter_bloc` for state, `get_it` for DI, `go_router` for navigation. NO Provider, Riverpod, MobX, Redux, GetX. Resolve dependencies via `sl<T>()` — registered in `core/di/service_locator.dart`. (`docs/03-state-routing.md`)
+8. **State + routing.** `flutter_bloc` for state, `get_it` for DI, `go_router` for navigation. NO Provider, Riverpod, MobX, Redux, GetX. Resolve dependencies via `di<T>()` — registered in `core/di/service_locator.dart`. (`docs/03-state-routing.md`)
 9. **Hands-off files.** Foundation files in `lib/core/network/`, `lib/core/local/`, `lib/core/usecase/`, `lib/core/di/service_locator.dart`, `lib/app/router/app_router.dart` (guard), `lib/core/network/interceptors/auth_interceptor.dart` require explicit user approval to modify. Extend with new classes or compose new sibling files instead. Full list in `docs/01-architecture.md` § Hands-off boundary. (`docs/01-architecture.md`)
 10. **Trailing commas.** Multi-line argument / parameter / collection literals end with a trailing comma. Single-line constructs do not. Fix with `fvm dart fix --apply --code=require_trailing_commas`. (`docs/02-conventions.md`)
 11. **Imports.** Grouped `dart:` → `package:` → relative, sorted, no unused. Trim + reorder on every file edit. Modules import other modules ONLY through that module's barrel (and ideally not at all — lift to `core/`). (`docs/02-conventions.md`)

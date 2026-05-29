@@ -5,8 +5,7 @@ import 'package:eatinpal/core/deeplink/deeplink_service.dart';
 import 'package:eatinpal/core/di/service_locator.dart';
 
 class App extends StatefulWidget {
-  final String initDest;
-  const App({super.key, required this.initDest});
+  const App({super.key});
 
   @override
   State<App> createState() => _AppState();
@@ -18,7 +17,7 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    _deeplink = sl<DeepLinkService>()..init();
+    _deeplink = di<DeepLinkService>()..init();
   }
 
   @override
@@ -33,7 +32,7 @@ class _AppState extends State<App> {
       title: 'EatinPal',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      routerConfig: router(initDest: widget.initDest),
+      routerConfig: router(),
     );
   }
 }

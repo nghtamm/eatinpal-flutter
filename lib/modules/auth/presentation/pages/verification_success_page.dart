@@ -8,7 +8,6 @@ import 'package:eatinpal/core/constants/app_colors.dart';
 import 'package:eatinpal/core/constants/app_spacing.dart';
 import 'package:eatinpal/core/constants/app_typography.dart';
 import 'package:eatinpal/core/di/service_locator.dart';
-import 'package:eatinpal/core/local/local_storage.dart';
 import 'package:eatinpal/core/widgets/app_snackbar.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_bloc.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_event.dart';
@@ -22,7 +21,7 @@ class VerificationSuccessPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<AuthBloc>(),
+      create: (_) => di<AuthBloc>(),
       child: _VerificationSuccessView(token: token),
     );
   }
@@ -76,10 +75,7 @@ class _VerificationSuccessViewState extends State<_VerificationSuccessView>
   Future<void> _bootstrap() async {
     if (!mounted) return;
 
-    final storage = sl<LocalStorage>();
-    final token = widget.token ?? await storage.verificationToken;
-
-    if (!mounted) return;
+    final token = widget.token;
 
     if (token == null || token.isEmpty) {
       await Future.delayed(const Duration(milliseconds: 1500));
@@ -87,8 +83,6 @@ class _VerificationSuccessViewState extends State<_VerificationSuccessView>
       return;
     }
 
-    await storage.clearVerificationToken();
-    if (!mounted) return;
     context.read<AuthBloc>().add(AuthVerifyFromLinkRequested(token));
   }
 

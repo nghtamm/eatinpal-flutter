@@ -7,7 +7,7 @@ import 'package:eatinpal/core/network/api_client.dart';
 import 'package:eatinpal/modules/auth/auth.dart';
 import 'package:get_it/get_it.dart';
 
-final sl = GetIt.instance;
+final di = GetIt.instance;
 
 Future<void> initDependencies() async {
   await _initCore();
@@ -18,47 +18,45 @@ Future<void> _initCore() async {
   // [LOCAL STORAGE]
   final storage = LocalStorageImpl();
   await storage.init();
-  sl.registerSingleton<LocalStorage>(storage);
+  di.registerSingleton<LocalStorage>(storage);
 
   // [NETWORK]
-  sl.registerLazySingleton<Dio>(() => Dio());
-  sl.registerLazySingleton<ApiClient>(
-    () => ApiClient(sl<Dio>(), sl<LocalStorage>()),
+  di.registerLazySingleton<Dio>(() => Dio());
+  di.registerLazySingleton<ApiClient>(
+    () => ApiClient(di<Dio>(), di<LocalStorage>()),
   );
 
   // [DEEP LINKING]
-  sl.registerLazySingleton<AppLinks>(() => AppLinks());
-  sl.registerLazySingleton<DeepLinkService>(
-    () => DeepLinkService(navigatorKey, sl<AppLinks>(), sl<LocalStorage>()),
+  di.registerLazySingleton<AppLinks>(() => AppLinks());
+  di.registerLazySingleton<DeepLinkService>(
+    () => DeepLinkService(navigatorKey, di<AppLinks>(), di<LocalStorage>()),
   );
 }
 
 void _initAuth() {
   // [SERVICES]
-  sl.registerLazySingleton(() => AuthService(sl<ApiClient>()));
+  di.registerLazySingleton(() => AuthService(di<ApiClient>()));
 
   // [REPOSITORIES]
-  sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(sl<AuthService>(), sl<LocalStorage>()),
+  di.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(di<AuthService>(), di<LocalStorage>()),
   );
 
   // [USECASES]
-  sl.registerLazySingleton(() => LoginUseCase(sl<AuthRepository>()));
-  sl.registerLazySingleton(() => RegisterUseCase(sl<AuthRepository>()));
-  sl.registerLazySingleton(
-    () => ResendVerificationUseCase(sl<AuthRepository>()),
-  );
-  sl.registerLazySingleton(() => VerifyUseCase(sl<AuthRepository>()));
-  sl.registerLazySingleton(() => VerifiedLoginUseCase(sl<AuthRepository>()));
+  di.registerLazySingleton(() => LoginUseCase(di<AuthRepository>()));
+  di.registerLazySingleton(() => RegisterUseCase(di<AuthRepository>()));
+  di.registerLazySingleton(() => ResendUseCase(di<AuthRepository>()));
+  di.registerLazySingleton(() => VerifyUseCase(di<AuthRepository>()));
+  di.registerLazySingleton(() => MagicLinkUseCase(di<AuthRepository>()));
 
   // [BLOCS]
-  sl.registerFactory(
+  di.registerFactory(
     () => AuthBloc(
-      register: sl<RegisterUseCase>(),
-      login: sl<LoginUseCase>(),
-      resendVerification: sl<ResendVerificationUseCase>(),
-      verify: sl<VerifyUseCase>(),
-      verifiedLogin: sl<VerifiedLoginUseCase>(),
+      register: di<RegisterUseCase>(),
+      login: di<LoginUseCase>(),
+      resend: di<ResendUseCase>(),
+      verify: di<VerifyUseCase>(),
+      magicLink: di<MagicLinkUseCase>(),
     ),
   );
 }

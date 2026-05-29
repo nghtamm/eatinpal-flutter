@@ -15,12 +15,6 @@ abstract class LocalStorage {
 
   Future<void> clearCredentialsToken();
 
-  Future<String?> get verificationToken;
-
-  Future<void> saveVerificationToken(String token);
-
-  Future<void> clearVerificationToken();
-
   Future<bool> get signed;
 
   Future<void> setString(String key, String value);
@@ -53,7 +47,6 @@ abstract class LocalStorage {
 class LocalStorageImpl implements LocalStorage {
   static const _ACCESS_TOKEN_KEY = 'access_token';
   static const _REFRESH_TOKEN_KEY = 'refresh_token';
-  static const _VERIFICATION_TOKEN_KEY = 'verification_token';
 
   late final FlutterSecureStorage _secure;
   late final SharedPreferences _prefs;
@@ -90,20 +83,6 @@ class LocalStorageImpl implements LocalStorage {
       _secure.delete(key: _ACCESS_TOKEN_KEY),
       _secure.delete(key: _REFRESH_TOKEN_KEY),
     ]);
-  }
-
-  @override
-  Future<String?> get verificationToken =>
-      _secure.read(key: _VERIFICATION_TOKEN_KEY);
-
-  @override
-  Future<void> saveVerificationToken(String token) async {
-    await _secure.write(key: _VERIFICATION_TOKEN_KEY, value: token);
-  }
-
-  @override
-  Future<void> clearVerificationToken() async {
-    await _secure.delete(key: _VERIFICATION_TOKEN_KEY);
   }
 
   @override

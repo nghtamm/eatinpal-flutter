@@ -171,7 +171,7 @@ Container(
 ```dart
 MaterialApp.router(
   theme: AppTheme.light,
-  routerConfig: router(initDest: widget.initDest),
+  routerConfig: router(),
   ...
 )
 ```

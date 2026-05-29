@@ -14,10 +14,10 @@ const _DEST_AUTH = {
   RoutePaths.VERIFICATION_SUCCESS,
 };
 
-GoRouter router({String? initDest = RoutePaths.AUTHENTICATION}) {
+GoRouter router() {
   return GoRouter(
     navigatorKey: navigatorKey,
-    initialLocation: initDest,
+    initialLocation: RoutePaths.AUTHENTICATION,
     debugLogDiagnostics: true,
     redirect: _guard,
     routes: [
@@ -68,7 +68,7 @@ GoRouter router({String? initDest = RoutePaths.AUTHENTICATION}) {
 }
 
 Future<String?> _guard(BuildContext context, GoRouterState state) async {
-  final signed = await sl<LocalStorage>().signed;
+  final signed = await di<LocalStorage>().signed;
   final destAuth = _DEST_AUTH.contains(state.matchedLocation);
 
   if (signed && destAuth) {

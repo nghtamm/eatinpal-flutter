@@ -2,8 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:eatinpal/core/network/exceptions.dart';
 import 'package:eatinpal/modules/auth/domain/usecases/login_usecase.dart';
 import 'package:eatinpal/modules/auth/domain/usecases/register_usecase.dart';
-import 'package:eatinpal/modules/auth/domain/usecases/resend_verification_usecase.dart';
-import 'package:eatinpal/modules/auth/domain/usecases/verified_login_usecase.dart';
+import 'package:eatinpal/modules/auth/domain/usecases/resend_usecase.dart';
+import 'package:eatinpal/modules/auth/domain/usecases/magic_link_usecase.dart';
 import 'package:eatinpal/modules/auth/domain/usecases/verify_usecase.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_event.dart';
 import 'package:eatinpal/modules/auth/presentation/bloc/auth_state.dart';
@@ -11,25 +11,25 @@ import 'package:eatinpal/modules/auth/presentation/bloc/auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUseCase _register;
   final LoginUseCase _login;
-  final ResendVerificationUseCase _resendVerification;
+  final ResendUseCase _resend;
   final VerifyUseCase _verify;
-  final VerifiedLoginUseCase _verifiedLogin;
+  final MagicLinkUseCase _magicLink;
 
   AuthBloc({
     required RegisterUseCase register,
     required LoginUseCase login,
-    required ResendVerificationUseCase resendVerification,
+    required ResendUseCase resend,
     required VerifyUseCase verify,
-    required VerifiedLoginUseCase verifiedLogin,
+    required MagicLinkUseCase magicLink,
   }) : _register = register,
        _login = login,
-       _resendVerification = resendVerification,
+       _resend = resend,
        _verify = verify,
-       _verifiedLogin = verifiedLogin,
+       _magicLink = magicLink,
        super(const AuthInitial()) {
     on<AuthRegisterSubmitted>(_onRegister);
     on<AuthLoginSubmitted>(_onLogin);
-    on<AuthResendVerificationRequested>(_onResendVerification);
+    on<AuthResendRequested>(_onResend);
     on<AuthVerifyFromLinkRequested>(_onVerifyFromLink);
   }
 
@@ -68,11 +68,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }, (right) => emit(AuthAuthenticated(right)));
   }
 
-  Future<void> _onResendVerification(
-    AuthResendVerificationRequested event,
+  Future<void> _onResend(
+    AuthResendRequested event,
     Emitter<AuthState> emit,
   ) async {
-    final result = await _resendVerification(event.email);
+    final result = await _resend(event.email);
     result.fold(
       (left) => emit(AuthFailure(left.message)),
       (right) => emit(AuthSuccess(right)),
@@ -95,7 +95,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    final loginResult = await _verifiedLogin(event.token);
+    final loginResult = await _magicLink(event.token);
     loginResult.fold(
       (left) => emit(AuthFailure(left.message)),
       (right) => emit(AuthAuthenticated(right)),

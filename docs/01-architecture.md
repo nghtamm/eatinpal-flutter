@@ -64,9 +64,9 @@ lib/
         │   │   ├── user_model.dart                 # freezed, implements UserEntity
         │   │   ├── user_model.freezed.dart         # generated — committed
         │   │   ├── user_model.g.dart               # generated — committed
-        │   │   ├── tokens_model.dart
-        │   │   ├── tokens_model.freezed.dart
-        │   │   └── tokens_model.g.dart
+        │   │   ├── credentials_model.dart
+        │   │   ├── credentials_model.freezed.dart
+        │   │   └── credentials_model.g.dart
         │   ├── services/
         │   │   └── auth_service.dart               # ApiClient calls, returns Either<AppException, ApiResult<T>>
         │   └── repository/
@@ -79,9 +79,9 @@ lib/
         │   └── usecases/
         │       ├── login_usecase.dart              # multi-field params class
         │       ├── register_usecase.dart
-        │       ├── resend_verification_usecase.dart # single-field — takes String directly (no wrapper)
+        │       ├── resend_usecase.dart # single-field — takes String directly (no wrapper)
         │       ├── verify_usecase.dart
-        │       └── verified_login_usecase.dart
+        │       └── magic_link_usecase.dart
         └── presentation/
             ├── bloc/
             │   ├── auth_bloc.dart                  # extends Bloc<AuthEvent, AuthState>
@@ -137,7 +137,7 @@ core/<area>/ → external packages
 **Modules don't import each other** because:
 
 - Cross-module coupling makes "delete this feature" become "rewrite five other features".
-- BLoCs are factory-scoped via `sl.registerFactory(...)` — reaching for another module's BLoC via `BlocProvider.of` from outside its provider scope throws.
+- BLoCs are factory-scoped via `di.registerFactory(...)` — reaching for another module's BLoC via `BlocProvider.of` from outside its provider scope throws.
 - It forces shared logic to be lifted to `core/` (widgets, helpers, constants) or modelled as a shared service / repository registered as a singleton.
 
 **`domain/` does NOT import `data/`** because:
@@ -167,7 +167,7 @@ What does NOT go in `core/widgets/`:
 ### `service_locator.dart` — DI wiring
 
 ```dart
-final sl = GetIt.instance;
+final di = GetIt.instance;
 
 Future<void> initDependencies() async {
   await _initCore();
@@ -179,31 +179,31 @@ Future<void> _initCore() async {
   // [LOCAL STORAGE]
   final storage = LocalStorageImpl();
   await storage.init();
-  sl.registerSingleton<LocalStorage>(storage);
+  di.registerSingleton<LocalStorage>(storage);
 
   // [NETWORK]
-  sl.registerLazySingleton<Dio>(() => Dio());
-  sl.registerLazySingleton<ApiClient>(
-    () => ApiClient(sl<Dio>(), sl<LocalStorage>()),
+  di.registerLazySingleton<Dio>(() => Dio());
+  di.registerLazySingleton<ApiClient>(
+    () => ApiClient(di<Dio>(), di<LocalStorage>()),
   );
 
   // [DEEP LINKING]
-  sl.registerLazySingleton<AppLinks>(() => AppLinks());
-  sl.registerLazySingleton<DeepLinkService>(
-    () => DeepLinkService(navigatorKey, sl<AppLinks>(), sl<LocalStorage>()),
+  di.registerLazySingleton<AppLinks>(() => AppLinks());
+  di.registerLazySingleton<DeepLinkService>(
+    () => DeepLinkService(navigatorKey, di<AppLinks>(), di<LocalStorage>()),
   );
 }
 
 void _initAuth() {
-  sl.registerLazySingleton(() => AuthService(sl<ApiClient>()));
-  sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(sl<AuthService>(), sl<LocalStorage>()),
+  di.registerLazySingleton(() => AuthService(di<ApiClient>()));
+  di.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(di<AuthService>(), di<LocalStorage>()),
   );
-  sl.registerLazySingleton(() => LoginUseCase(sl<AuthRepository>()));
+  di.registerLazySingleton(() => LoginUseCase(di<AuthRepository>()));
   // ... other usecases
-  sl.registerFactory(() => AuthBloc(
-        register: sl<RegisterUseCase>(),
-        login: sl<LoginUseCase>(),
+  di.registerFactory(() => AuthBloc(
+        register: di<RegisterUseCase>(),
+        login: di<LoginUseCase>(),
         // ...
       ));
 }
@@ -228,10 +228,10 @@ const _DEST_AUTH = {
   RoutePaths.VERIFICATION_SUCCESS,
 };
 
-GoRouter router({String? initDest = RoutePaths.AUTHENTICATION}) {
+GoRouter router() {
   return GoRouter(
     navigatorKey: navigatorKey,
-    initialLocation: initDest,
+    initialLocation: RoutePaths.AUTHENTICATION,
     redirect: _guard,
     routes: [
       GoRoute(path: RoutePaths.AUTHENTICATION, name: RouteNames.AUTHENTICATION, builder: (_, __) => const AuthenticationPage()),
@@ -242,7 +242,7 @@ GoRouter router({String? initDest = RoutePaths.AUTHENTICATION}) {
 }
 
 Future<String?> _guard(BuildContext context, GoRouterState state) async {
-  final signed = await sl<LocalStorage>().signed;
+  final signed = await di<LocalStorage>().signed;
   final destAuth = _DEST_AUTH.contains(state.matchedLocation);
   if (signed && destAuth)   return RoutePaths.HOME;
   if (!signed && !destAuth) return RoutePaths.AUTHENTICATION;
@@ -264,8 +264,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(...);      // 2. Status bar styling
   await dotenv.load();                            // 3. .env loaded — BASE_URL needed before ApiClient
   await initDependencies();                       // 4. DI — registers LocalStorage (with init), Dio, ApiClient, DeepLinkService, auth tree
-  final route = await _determineInitialRoute();   // 5. Inspect cold-start deep link, decide initial route
-  runApp(App(initDest: route));                   // 6. MaterialApp.router with initial route
+  runApp(const App());                            // 5. MaterialApp.router; guard decides landing route
 }
 ```
 
@@ -273,14 +272,10 @@ Why this order:
 
 1. **`WidgetsFlutterBinding.ensureInitialized()` first** — required before any async Flutter API (incl. `SharedPreferences.getInstance()`).
 2. **`dotenv.load()` before DI** — `ApiClient`'s base URL comes from `ApiEndpoints.BASE_URL` which reads `dotenv.env['BASE_URL']`.
-3. **`initDependencies()` before route resolution** — `_determineInitialRoute` calls `sl<AppLinks>()` and `sl<LocalStorage>()`.
-4. **`_determineInitialRoute` before `runApp`** — `MaterialApp.router` needs `initialLocation` at construction time. Cold-start magic-link `/auth/verify?token=...` resolves here:
-   - No link → `AUTHENTICATION`.
-   - Already signed → `HOME` (token-in-link ignored).
-   - JWT expired → `AUTHENTICATION`.
-   - Otherwise → stash token in `LocalStorage.saveVerificationToken(...)` and route to `VERIFICATION_SUCCESS`. The page reads + clears the token (one-shot bridge — `go_router` doesn't support `initialExtra`).
+3. **`initDependencies()` before `runApp`** — `DeepLinkService` and `LocalStorage` must be registered before the app starts.
+4. **No route decision in `main.dart`** — `router()` always sets `initialLocation: RoutePaths.AUTHENTICATION`; `_guard` immediately redirects a signed-in user to `HOME`. This intentional simplification removes the redundant `initDest` threading that duplicated guard logic. A signed user may briefly hit the async guard redirect on cold start.
 
-After `runApp`, `App` initialises `DeepLinkService.init()` in its `initState` — handles warm-start links via stream.
+After `runApp`, `App` initialises `DeepLinkService.init()` in its `initState` — handles both cold-start and warm-start links via `uriLinkStream`.
 
 ## Hands-off boundary
 
@@ -345,13 +340,13 @@ export 'domain/entities/user_entity.dart';
 export 'domain/repository/auth_repository.dart';
 export 'domain/usecases/login_usecase.dart';
 export 'domain/usecases/register_usecase.dart';
-export 'domain/usecases/resend_verification_usecase.dart';
+export 'domain/usecases/resend_usecase.dart';
 export 'domain/usecases/verify_usecase.dart';
-export 'domain/usecases/verified_login_usecase.dart';
+export 'domain/usecases/magic_link_usecase.dart';
 
 // [DATA]
 export 'data/models/user_model.dart';
-export 'data/models/tokens_model.dart';
+export 'data/models/credentials_model.dart';
 export 'data/services/auth_service.dart';
 export 'data/repository/auth_repository_impl.dart';
 

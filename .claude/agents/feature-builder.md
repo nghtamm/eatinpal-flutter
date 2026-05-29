@@ -52,6 +52,12 @@ For pure presentational widgets / stateless pages, use `ui-ux-designer` instead.
 
 ## What it does
 
+### Parallel-dispatch safety
+
+When dispatched alongside other `feature-builder`s (one module each), own only your module folder `lib/modules/<module_name>/`. The shared composition files — `app_router.dart`, `route_names.dart`, `api_endpoints.dart`, `service_locator.dart` — are touched by every builder, so they're conflict points: keep each insertion minimal and additive, and if you hit a concurrent-edit collision, STOP and report it instead of overwriting. Never invent an unfamiliar pattern to keep going — report the blocker and wait for guidance.
+
+Note: `app_router.dart` and `service_locator.dart` are hands-off foundation files (`.claude/rules/hands-off.md`). Edits to them must remain minimal and additive; anything beyond a straightforward new-route or new-registration block requires surfacing to the user first.
+
 ### When creating a module
 
 1. Validate `module_name` is snake_case (lowercase letters, digits, underscores; doesn't start with a digit).
@@ -95,16 +101,16 @@ For pure presentational widgets / stateless pages, use `ui-ux-designer` instead.
 8. **Presentation layer:**
    - Event/State classes — regular Dart with `Equatable` and `props` overrides. Pick Style A (multi-class divergent) or Style B (single-class + enum status) per the rule.
    - BLoC: constructor injects usecases. Handlers `_onXxx(event, emit) async` use `.fold((left), (right))` to map outcome to states.
-   - Page: `StatefulWidget`/`StatelessWidget` consuming BLoC via `BlocProvider(create: (_) => sl<XxxBloc>(), child: _XxxView())`. Private widget builders drop the `_build` prefix.
+   - Page: `StatefulWidget`/`StatelessWidget` consuming BLoC via `BlocProvider(create: (_) => di<XxxBloc>(), child: _XxxView())`. Private widget builders drop the `_build` prefix.
 
 9. **DI/route integration:**
    - Add endpoint constants to `lib/core/network/api_endpoints.dart`.
    - Append `RoutePaths.<MODULE_NAME>` + `RouteNames.<MODULE_NAME>` to `lib/app/router/route_names.dart`.
    - Add a `_register<ModuleName>Module()` function in `lib/core/di/service_locator.dart` and call it from `setupServiceLocator()`. Pattern:
-     - `registerLazySingleton<XService>(() => XService(sl()))`
-     - `registerLazySingleton<XRepository>(() => XRepositoryImpl(sl()))`
-     - `registerLazySingleton(() => XxxUseCase(sl()))` — one per usecase
-     - `registerFactory(() => XBloc(usecase: sl(), …))`
+     - `registerLazySingleton<XService>(() => XService(di()))`
+     - `registerLazySingleton<XRepository>(() => XRepositoryImpl(di()))`
+     - `registerLazySingleton(() => XxxUseCase(di()))` — one per usecase
+     - `registerFactory(() => XBloc(usecase: di(), …))`
    - Add a `GoRoute(path: RoutePaths.X, name: RouteNames.X, builder: …)` to `lib/app/router/app_router.dart`.
    - Re-export the module's public surface from `lib/modules/<module_name>/<module_name>.dart` (one `export` per file in `data/`, `domain/`, `presentation/`).
 10. Run `fvm flutter analyze`. Report issues. If freezed model edits are pending regeneration, mention the `build_runner` command.
@@ -141,7 +147,7 @@ For pure presentational widgets / stateless pages, use `ui-ux-designer` instead.
 - Don't touch hands-off files (`.claude/rules/hands-off.md`) without surfacing it first.
 - Don't skip `fvm dart run build_runner build --delete-conflicting-outputs` after freezed edits.
 - Don't forget to add the module's exports to the barrel `<name>.dart`.
-- Don't forget DI registration — a missing `sl.registerXxx` throws at runtime.
+- Don't forget DI registration — a missing `di.registerXxx` throws at runtime.
 - Don't add new dependencies to `pubspec.yaml` without explicit user approval.
 
 ## See also

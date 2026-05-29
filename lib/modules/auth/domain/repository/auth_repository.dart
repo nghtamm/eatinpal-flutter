@@ -13,11 +13,9 @@ abstract class AuthRepository {
     required String name,
   });
 
-  Future<Either<AppException, String>> resendVerification({
-    required String email,
-  });
+  Future<Either<AppException, String>> resend({required String email});
 
   Future<Either<AppException, String>> verify({required String token});
 
-  Future<Either<AppException, String>> verifiedLogin({required String token});
+  Future<Either<AppException, String>> magicLink({required String token});
 }

@@ -19,8 +19,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
     return result.fold((left) async => Left(left), (right) async {
       await _storage.saveCredentialsToken(
-        accessToken: right.data.tokens.accessToken,
-        refreshToken: right.data.tokens.refreshToken,
+        accessToken: right.data.credentials.accessToken,
+        refreshToken: right.data.credentials.refreshToken,
       );
 
       return Right(right.message);
@@ -43,10 +43,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<AppException, String>> resendVerification({
-    required String email,
-  }) async {
-    final result = await _service.resendVerification(email: email);
+  Future<Either<AppException, String>> resend({required String email}) async {
+    final result = await _service.resend(email: email);
 
     return result.fold((left) => Left(left), (right) => Right(right.message));
   }
@@ -59,15 +57,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<AppException, String>> verifiedLogin({
+  Future<Either<AppException, String>> magicLink({
     required String token,
   }) async {
-    final result = await _service.verifiedLogin(verificationToken: token);
+    final result = await _service.magicLink(verificationToken: token);
 
     return result.fold((left) async => Left(left), (right) async {
       await _storage.saveCredentialsToken(
-        accessToken: right.data.tokens.accessToken,
-        refreshToken: right.data.tokens.refreshToken,
+        accessToken: right.data.credentials.accessToken,
+        refreshToken: right.data.credentials.refreshToken,
       );
 
       return Right(right.message);

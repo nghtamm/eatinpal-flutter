@@ -52,9 +52,9 @@ Future<Either<AppException, ApiResult<UserModel>>> fetchUser({
   required int id,
   bool includeProfile = false,
 }) {
-  return sl<ApiClient>().request<UserModel>(
+  return _client.request<UserModel>(
+    endpoint: ApiEndpoints.userDetail(id),
     method: RestMethod.GET,
-    path: ApiEndpoints.userDetail(id),
     parser: (data) => UserModel.fromJson(data as Map<String, dynamic>),
   );
 }

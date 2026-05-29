@@ -1,6 +1,6 @@
 ---
 name: state-management
-description: flutter_bloc for state (events/states are regular classes + Equatable, NEVER freezed). get_it for DI (instance `sl`). go_router for navigation. fpdart `Either<AppException, T>` for fallible ops with `.fold((left), (right))`. NO Provider/Riverpod/MobX/Redux/GetX.
+description: flutter_bloc for state (events/states are regular classes + Equatable, NEVER freezed). get_it for DI (instance `di`). go_router for navigation. fpdart `Either<AppException, T>` for fallible ops with `.fold((left), (right))`. NO Provider/Riverpod/MobX/Redux/GetX.
 ---
 
 # Rule: State management, DI, routing, error flow
@@ -8,7 +8,7 @@ description: flutter_bloc for state (events/states are regular classes + Equatab
 ## Constraint
 
 - **State management:** `flutter_bloc`. Events and states are regular classes with `Equatable`, override `props`. **NEVER `freezed` for BLoC.** Two styles — pick by state shape (see below).
-- **DI:** `get_it`. Single global instance `sl` registered in `lib/core/di/service_locator.dart`. Resolve with `sl<T>()`. No `Provider`, `Riverpod`, `Bindings`, factory-singleton-by-hand.
+- **DI:** `get_it`. Single global instance `di` registered in `lib/core/di/service_locator.dart`. Resolve with `di<T>()`. No `Provider`, `Riverpod`, `Bindings`, factory-singleton-by-hand.
 - **Navigation:** `go_router` only. `context.go(...)`, `context.push(...)`, `context.pop(result)`, `context.pushReplacement(...)`. Routes in `lib/app/router/app_router.dart`; `RoutePaths` / `RouteNames` in `lib/app/router/route_names.dart`.
 - **Dialogs / sheets / snackbars:** Flutter native (`showDialog`, `showModalBottomSheet`). For snackbars use the project's `AppSnackbar.success/info/warning/error(context, message)`. NO custom GetX-style wrappers.
 - **Error flow:** Services return `Future<Either<AppException, ApiResult<T>>>`. Repositories unwrap `ApiResult` and return `Future<Either<AppException, T>>`. UseCases pass through. BLoC handlers `.fold((left), (right))` and emit appropriate state. **Always name fold params `left` / `right`** — NOT domain names. **Avoid `switch (result) { case Left ... case Right }`.**
@@ -105,32 +105,32 @@ class FoodListState extends Equatable {
 
 ```dart
 // lib/core/di/service_locator.dart
-final sl = GetIt.instance;
+final di = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
   // Core
-  sl.registerLazySingleton<LocalStorage>(() => LocalStorageImpl());
-  await sl<LocalStorage>().init();
-  sl.registerLazySingleton<ApiClient>(() => ApiClient(sl()));
+  di.registerLazySingleton<LocalStorage>(() => LocalStorageImpl());
+  await di<LocalStorage>().init();
+  di.registerLazySingleton<ApiClient>(() => ApiClient(di()));
 
   // Modules
   _registerAuthModule();
 }
 
 void _registerAuthModule() {
-  sl
-    ..registerLazySingleton<AuthService>(() => AuthService())
+  di
+    ..registerLazySingleton<AuthService>(() => AuthService(di()))
     ..registerLazySingleton<AuthRepository>(
-      () => AuthRepositoryImpl(sl(), sl()),
+      () => AuthRepositoryImpl(di(), di()),
     )
-    ..registerLazySingleton(() => LoginUseCase(sl()))
-    ..registerLazySingleton(() => RegisterUseCase(sl()))
+    ..registerLazySingleton(() => LoginUseCase(di()))
+    ..registerLazySingleton(() => RegisterUseCase(di()))
     ..registerFactory(() => AuthBloc(
-          login: sl(),
-          register: sl(),
-          resendVerification: sl(),
-          verify: sl(),
-          verifiedLogin: sl(),
+          login: di(),
+          register: di(),
+          resend: di(),
+          verify: di(),
+          magicLink: di(),
         ));
 }
 ```
@@ -155,16 +155,29 @@ GoRoute(
 
 ```dart
 // data/services/auth_service.dart
+typedef LoginResponse = ({UserModel user, CredentialsModel credentials});
+
 class AuthService {
-  Future<Either<AppException, ApiResult<LoginResponseModel>>> login({
+  final ApiClient _client;
+  const AuthService(this._client);
+
+  Future<Either<AppException, ApiResult<LoginResponse>>> login({
     required String email,
     required String password,
   }) {
-    return sl<ApiClient>().request<LoginResponseModel>(
+    return _client.request<LoginResponse>(
+      endpoint: ApiEndpoints.LOGIN,
       method: RestMethod.POST,
-      path: ApiEndpoints.LOGIN,
       data: {'email': email, 'password': password},
-      parser: (data) => LoginResponseModel.fromJson(data as Map<String, dynamic>),
+      parser: (data) {
+        final map = data as Map<String, dynamic>;
+        return (
+          user: UserModel.fromJson(map['user'] as Map<String, dynamic>),
+          credentials: CredentialsModel.fromJson(
+            map['tokens'] as Map<String, dynamic>,
+          ),
+        );
+      },
     );
   }
 }
@@ -183,8 +196,8 @@ class AuthRepositoryImpl implements AuthRepository {
     final result = await _service.login(email: email, password: password);
     return result.fold((left) async => Left(left), (right) async {
       await _storage.saveCredentialsToken(
-        accessToken: right.data.tokens.accessToken,
-        refreshToken: right.data.tokens.refreshToken,
+        accessToken: right.data.credentials.accessToken,
+        refreshToken: right.data.credentials.refreshToken,
       );
       return Right(right.message);
     });
@@ -224,13 +237,13 @@ Future<void> _onLogin(AuthLoginSubmitted event, Emitter<AuthState> emit) async {
 Note: `single-field` usecase params skip the wrapper class — pass the primitive directly:
 
 ```dart
-class ResendVerificationUseCase implements UseCase<String, String> {
+class ResendUseCase implements UseCase<String, String> {
   final AuthRepository _repository;
-  const ResendVerificationUseCase(this._repository);
+  const ResendUseCase(this._repository);
 
   @override
   Future<Either<AppException, String>> call(String email) =>
-      _repository.resendVerification(email: email);
+      _repository.resend(email: email);
 }
 ```
 
@@ -268,7 +281,7 @@ void _onStateChanged(BuildContext context, AuthState state) {
 class AuthState with _$AuthState { ... }
 
 Provider.of<AuthBloc>(context, listen: false);                 // ❌ — use BlocProvider + context.read
-sl.registerSingleton(AuthBloc(...));                           // ❌ — BLoCs are registerFactory
+di.registerSingleton(AuthBloc(...));                           // ❌ — BLoCs are registerFactory
 Get.find<AuthBloc>();                                          // ❌ — no GetX
 
 switch (result) {                                              // ❌ — use .fold((left), (right))

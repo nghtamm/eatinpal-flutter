@@ -26,7 +26,7 @@ class VerifyEmailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<AuthBloc>(),
+      create: (_) => di<AuthBloc>(),
       child: _VerifyEmailView(args: args),
     );
   }
@@ -64,7 +64,7 @@ class _VerifyEmailViewState extends State<_VerifyEmailView> {
 
   void _requestResend() {
     if (_email.isEmpty || _cooldown > 0) return;
-    context.read<AuthBloc>().add(AuthResendVerificationRequested(_email));
+    context.read<AuthBloc>().add(AuthResendRequested(_email));
     _startCooldown();
   }
 

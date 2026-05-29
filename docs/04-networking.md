@@ -101,7 +101,7 @@ client.request<List<FoodModel>>(
 );
 
 // 3. Tuple / record — typedef + destructure.
-typedef LoginResponse = ({UserModel user, TokensModel tokens});
+typedef LoginResponse = ({UserModel user, CredentialsModel credentials});
 
 client.request<LoginResponse>(
   endpoint: ApiEndpoints.LOGIN,
@@ -111,7 +111,7 @@ client.request<LoginResponse>(
     final map = data as Map<String, dynamic>;
     return (
       user: UserModel.fromJson(map['user'] as Map<String, dynamic>),
-      tokens: TokensModel.fromJson(map['tokens'] as Map<String, dynamic>),
+      credentials: CredentialsModel.fromJson(map['tokens'] as Map<String, dynamic>),
     );
   },
 );
@@ -199,7 +199,7 @@ Future<Either<AppException, ApiResult<LoginResponse>>> login({
       final map = data as Map<String, dynamic>;
       return (
         user: UserModel.fromJson(map['user'] as Map<String, dynamic>),
-        tokens: TokensModel.fromJson(map['tokens'] as Map<String, dynamic>),
+        credentials: CredentialsModel.fromJson(map['tokens'] as Map<String, dynamic>),
       );
     },
   );
@@ -221,8 +221,8 @@ Future<Either<AppException, String>> login({
     (left) async => Left(left),
     (right) async {
       await _storage.saveCredentialsToken(
-        accessToken: right.data.tokens.accessToken,
-        refreshToken: right.data.tokens.refreshToken,
+        accessToken: right.data.credentials.accessToken,
+        refreshToken: right.data.credentials.refreshToken,
       );
       return Right(right.message);                  // domain only needs the message
     },
@@ -297,7 +297,7 @@ class NoInternetException extends AppException { /* connection error */ }
 
 Default messages are fallbacks — `ErrorHandler` overrides with the server's `message` field when present.
 
-Add a new subclass when a new HTTP code needs domain-specific behaviour (e.g. `LockedException` for HTTP 423). Wire it into `ErrorHandler._handleBadResponse` (which is hands-off — surface the change).
+Add a new subclass when a new HTTP code needs domain-specific behaviour (e.g. `LockedException` for HTTP 423). Wire it into `ErrorHandler._handleErrResponse` (which is hands-off — surface the change).
 
 ## `ErrorHandler`
 
@@ -310,28 +310,49 @@ abstract final class ErrorHandler {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return const TimeoutException(message: _MSG_TIMEOUT);
+        return const TimeoutException(
+          message: 'Connection timed out. Please try again.',
+        );
       case DioExceptionType.cancel:
-        return const CancelException(message: _MSG_CANCEL);
+        return const CancelException(
+          message: 'The request was cancelled. Please try again.',
+        );
       case DioExceptionType.connectionError:
-        return const NoInternetException(message: _MSG_NO_INTERNET);
+        return const NoInternetException(
+          message:
+              'No internet connection. Please check your connection and try again.',
+        );
       case DioExceptionType.badResponse:
-        return _handleBadResponse(error.response);
+        return _handleErrResponse(error.response);
       case DioExceptionType.badCertificate:
+        return const NetworkException(
+          message: 'An error occurred unexpectedly. Please try again later.',
+        );
       case DioExceptionType.unknown:
-        return const NetworkException(message: _MSG_UNEXPECTED);
+        return const NetworkException(
+          message: 'An error occurred unexpectedly. Please try again later.',
+        );
     }
   }
 
-  static AppException _handleBadResponse(Response? response) {
+  static AppException _handleErrResponse(Response? response) {
     final statusCode = response?.statusCode;
-    final message = _extractMessage(response?.data);
+    final data = response?.data;
+    final message = _extractMessage(data);
 
     switch (statusCode) {
-      case 400: return BadRequestException(message: message ?? _MSG_INVALID_REQUEST, data: response?.data);
-      case 401: return UnauthorizedException(message: message ?? _MSG_SESSION_EXPIRED, data: response?.data);
-      case 403: return ForbiddenException(message: message ?? _MSG_SESSION_EXPIRED, data: response?.data);
-      // ... etc
+      case 400:
+        return BadRequestException(
+          message: message ?? 'An error occurred unexpectedly. Please try again later.',
+          data: data,
+        );
+      case 401:
+        return UnauthorizedException(
+          message: message ?? 'Your session has expired. Please log in again.',
+          data: data,
+        );
+      // ... 403–504 each return their own typed exception with an inline
+      //     fallback message; the server `message` wins when present
     }
   }
 
@@ -460,7 +481,7 @@ final formData = FormData.fromMap({
   ),
 });
 
-final result = await sl<ApiClient>().upload<UploadResult>(
+final result = await di<ApiClient>().upload<UploadResult>(
   endpoint: ApiEndpoints.UPLOAD_AVATAR,
   formData: formData,
   onProgress: (sent, total) {
@@ -512,10 +533,10 @@ import 'package:eatinpal/core/network/api_endpoints.dart';
 import 'package:eatinpal/core/network/api_methods.dart';
 import 'package:eatinpal/core/network/api_result.dart';
 import 'package:eatinpal/core/network/exceptions.dart';
-import 'package:eatinpal/modules/auth/data/models/tokens_model.dart';
+import 'package:eatinpal/modules/auth/data/models/credentials_model.dart';
 import 'package:eatinpal/modules/auth/data/models/user_model.dart';
 
-typedef LoginResponse = ({UserModel user, TokensModel tokens});
+typedef LoginResponse = ({UserModel user, CredentialsModel credentials});
 
 class AuthService {
   final ApiClient _client;
@@ -534,7 +555,7 @@ class AuthService {
         final map = data as Map<String, dynamic>;
         return (
           user: UserModel.fromJson(map['user'] as Map<String, dynamic>),
-          tokens: TokensModel.fromJson(map['tokens'] as Map<String, dynamic>),
+          credentials: CredentialsModel.fromJson(map['tokens'] as Map<String, dynamic>),
         );
       },
     );
@@ -558,7 +579,7 @@ class AuthService {
 Conventions:
 
 - Constructor takes `ApiClient` as positional `_client` (private). `const` constructor where possible.
-- Method names match the action (`login`, `register`, `resendVerification`, `verify`, `verifiedLogin`).
+- Method names match the action (`login`, `register`, `resend`, `verify`, `magicLink`).
 - Always return `Future<Either<AppException, ApiResult<T>>>`.
 - `parser: (_) {}` for void-data endpoints.
 - Use Dart 3.0+ records / typedefs (`LoginResponse`) for tuple-shaped payloads.
@@ -578,9 +599,9 @@ abstract final class ApiEndpoints {
   static const String LOGIN = '/auth/login';
   static const String REGISTER = '/auth/register';
   static const String REFRESH = '/auth/refresh';
-  static const String RESEND_VERIFICATION = '/auth/resend-verification';
+  static const String RESEND = '/auth/resend';
   static const String VERIFY = '/auth/verify';
-  static const String VERIFIED_LOGIN = '/auth/verified-login';
+  static const String MAGIC_LINK = '/auth/magic-link';
 }
 ```
 

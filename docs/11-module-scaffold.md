@@ -451,7 +451,7 @@ class FoodListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<FoodListBloc>()..add(const FoodListStarted()),
+      create: (_) => di<FoodListBloc>()..add(const FoodListStarted()),
       child: const _FoodListView(),
     );
   }
@@ -544,19 +544,19 @@ Future<void> initDependencies() async {
 
 void _initFood() {
   // [SERVICES]
-  sl.registerLazySingleton(() => FoodService(sl<ApiClient>()));
+  di.registerLazySingleton(() => FoodService(di<ApiClient>()));
 
   // [REPOSITORIES]
-  sl.registerLazySingleton<FoodRepository>(
-    () => FoodRepositoryImpl(sl<FoodService>()),
+  di.registerLazySingleton<FoodRepository>(
+    () => FoodRepositoryImpl(di<FoodService>()),
   );
 
   // [USECASES]
-  sl.registerLazySingleton(() => GetFoodListUseCase(sl<FoodRepository>()));
+  di.registerLazySingleton(() => GetFoodListUseCase(di<FoodRepository>()));
 
   // [BLOCS]
-  sl.registerFactory(
-    () => FoodListBloc(getList: sl<GetFoodListUseCase>()),
+  di.registerFactory(
+    () => FoodListBloc(getList: di<GetFoodListUseCase>()),
   );
 }
 ```
@@ -570,7 +570,7 @@ Order matters within the function: services → repositories → usecases → bl
 ```dart
 import 'package:eatinpal/modules/food/food.dart';                  // ← new
 
-GoRouter router({String? initDest = RoutePaths.AUTHENTICATION}) {
+GoRouter router() {
   return GoRouter(
     // ... existing
     routes: [
@@ -625,7 +625,7 @@ class SearchFoodUseCase extends UseCase<List<FoodEntity>, String> {
 }
 
 // Call site:
-final result = await sl<SearchFoodUseCase>()(query);
+final result = await di<SearchFoodUseCase>()(query);
 ```
 
 ### No-params usecase
@@ -642,7 +642,7 @@ class GetTodaysCaloriesUseCase extends UseCaseNoParams<int> {
 }
 
 // Call site:
-final result = await sl<GetTodaysCaloriesUseCase>()();
+final result = await di<GetTodaysCaloriesUseCase>()();
 ```
 
 ### Multi-bloc page
@@ -652,8 +652,8 @@ If a page composes two BLoCs (rare — usually a sign that one of them should be
 ```dart
 return MultiBlocProvider(
   providers: [
-    BlocProvider(create: (_) => sl<FoodListBloc>()),
-    BlocProvider(create: (_) => sl<DailyTotalBloc>()),
+    BlocProvider(create: (_) => di<FoodListBloc>()),
+    BlocProvider(create: (_) => di<DailyTotalBloc>()),
   ],
   child: const _FoodListView(),
 );
@@ -661,7 +661,7 @@ return MultiBlocProvider(
 
 ### Reusing a BLoC across pages
 
-`registerFactory` gives a new BLoC per `sl<X>()`. If you need to share state across two screens (e.g. a list and a detail picker), share via a singleton repository OR lift the `BlocProvider` to the common ancestor route and pass via `BlocProvider.value`.
+`registerFactory` gives a new BLoC per `di<X>()`. If you need to share state across two screens (e.g. a list and a detail picker), share via a singleton repository OR lift the `BlocProvider` to the common ancestor route and pass via `BlocProvider.value`.
 
 ## Common pitfalls (specific to scaffolding)
 

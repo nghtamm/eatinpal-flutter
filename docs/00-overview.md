@@ -10,13 +10,13 @@ EatinPal is a Flutter mobile app (Android + iOS only) for tracking daily calorie
 
 - **Clean Architecture per module** under `lib/modules/<name>/` with mandatory `data/`, `domain/`, `presentation/` layers.
 - **`flutter_bloc`** for state — events and states are regular classes with `Equatable`, NEVER freezed.
-- **`get_it`** for dependency injection — single instance `sl` registered in `lib/core/di/service_locator.dart`.
+- **`get_it`** for dependency injection — single instance `di` registered in `lib/core/di/service_locator.dart`.
 - **`go_router`** for navigation, with auth gating via a `redirect` guard reading `LocalStorage.signed`.
 - **`Dio`** with a custom `ApiClient` wrapper, two interceptors (`AuthInterceptor` + `LoggingInterceptor`), envelope auto-extraction, silent refresh-token rotation on 401.
 - **`fpdart` `Either<AppException, T>`** as the result contract — repositories and usecases return it; services return `Either<AppException, ApiResult<T>>` (envelope-wrapped).
 - **`freezed` + `json_serializable`** for data models — models extend / implement the matching domain entity. Generated files are committed.
 - **Token-based design system** under `lib/core/constants/` — `AppColors`, `AppSpacing` (with `AppPadding`, `AppRadius` siblings), `AppTypography`, `AppFonts`, `AppTheme`. Never inline raw design literals.
-- **Deep linking** via `app_links` — `DeepLinkService` handles warm-start streams; cold-start is resolved in `main.dart` before `runApp`.
+- **Deep linking** via `app_links` — `DeepLinkService` handles both warm-start and cold-start via a single `uriLinkStream` listener; `main.dart` only starts the app.
 - **`flutter_dotenv`** — `.env` loaded at boot, used by `ApiEndpoints.BASE_URL`.
 
 ## Tech stack at a glance
@@ -42,7 +42,7 @@ Dart SDK `^3.11.4`, Flutter 3.41+. **All Flutter / Dart CLI calls go through FVM
 
 ```
 lib/
-├── main.dart                       # bootstrap — WidgetsFlutterBinding, dotenv, DI, initial deep-link route, runApp
+├── main.dart                       # bootstrap — WidgetsFlutterBinding, dotenv, DI, runApp
 ├── app/
 │   ├── app.dart                    # AppRoot — MaterialApp.router + AppTheme.light + DeepLinkService lifecycle
 │   └── router/
@@ -50,8 +50,8 @@ lib/
 │       └── route_names.dart        # RoutePaths (UPPER_SNAKE_CASE) + RouteNames (UPPER_SNAKE_CASE)
 ├── core/                           # shared, NO barrel — import individual files
 │   ├── constants/                  # AppColors, AppSpacing / AppPadding / AppRadius, AppTypography, AppFonts, AppTheme
-│   ├── deeplink/                   # DeepLinkService — warm-start stream + cold-start helper
-│   ├── di/                         # service_locator.dart — `sl` instance + `initDependencies()` + `_initCore` / `_initAuth`
+│   ├── deeplink/                   # DeepLinkService — single uriLinkStream listener (warm + cold-start)
+│   ├── di/                         # service_locator.dart — `di` instance + `initDependencies()` + `_initCore` / `_initAuth`
 │   ├── helpers/                    # extensions, validators, jwt
 │   ├── local/                      # LocalStorage interface + LocalStorageImpl (secure + prefs)
 │   ├── network/                    # ApiClient, ApiResult, ApiEndpoints, exceptions, ErrorHandler, ApiMethods, ProtocolType
@@ -62,11 +62,11 @@ lib/
     └── auth/                       # sample module — full clean architecture
         ├── auth.dart               # MANDATORY per-module barrel
         ├── data/
-        │   ├── models/             # UserModel, TokensModel (freezed, extend entity)
+        │   ├── models/             # UserModel, CredentialsModel (freezed, extend entity)
         │   ├── services/           # AuthService — calls ApiClient
         │   └── repository/         # AuthRepositoryImpl — wraps services, persists tokens
         ├── domain/
-        │   ├── entities/           # UserEntity, TokensEntity
+        │   ├── entities/           # UserEntity, CredentialsEntity
         │   ├── repository/         # AuthRepository (abstract)
         │   └── usecases/           # LoginUseCase, RegisterUseCase, VerifyUseCase, ...
         └── presentation/

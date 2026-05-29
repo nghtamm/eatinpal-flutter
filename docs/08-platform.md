@@ -23,8 +23,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(...);
   await dotenv.load();                       // ← load before initDependencies
   await initDependencies();
-  final route = await _determineInitialRoute();
-  runApp(App(initDest: route));
+  runApp(const App());
 }
 ```
 
@@ -72,11 +71,6 @@ abstract class LocalStorage {
   Future<void> saveCredentialsToken({required String accessToken, required String refreshToken});
   Future<void> clearCredentialsToken();
 
-  // Verification token (cold-start magic-link carrier) — secure
-  Future<String?> get verificationToken;
-  Future<void> saveVerificationToken(String token);
-  Future<void> clearVerificationToken();
-
   // Convenience
   Future<bool> get signed;
 
@@ -107,7 +101,6 @@ Backed by `flutter_secure_storage` (for tokens) + `shared_preferences` (for ever
 class LocalStorageImpl implements LocalStorage {
   static const _ACCESS_TOKEN_KEY = 'access_token';
   static const _REFRESH_TOKEN_KEY = 'refresh_token';
-  static const _VERIFICATION_TOKEN_KEY = 'verification_token';
 
   late final FlutterSecureStorage _secure;
   late final SharedPreferences _prefs;
@@ -137,7 +130,7 @@ Backed by:
 Future<void> _initCore() async {
   final storage = LocalStorageImpl();
   await storage.init();
-  sl.registerSingleton<LocalStorage>(storage);
+  di.registerSingleton<LocalStorage>(storage);
   // ...
 }
 ```
@@ -148,34 +141,30 @@ Always `registerSingleton` (not `registerLazySingleton`) for `LocalStorage` beca
 
 ```dart
 // Write (login / refresh success)
-await sl<LocalStorage>().saveCredentialsToken(
+await di<LocalStorage>().saveCredentialsToken(
   accessToken: response.accessToken,
   refreshToken: response.refreshToken,
 );
 
 // Read (interceptor, guard)
-final token = await sl<LocalStorage>().accessToken;
+final token = await di<LocalStorage>().accessToken;
 
 // Check signed-in
-final signed = await sl<LocalStorage>().signed;        // true iff accessToken != null
+final signed = await di<LocalStorage>().signed;        // true iff accessToken != null
 
 // Logout
-await sl<LocalStorage>().clearCredentialsToken();
+await di<LocalStorage>().clearCredentialsToken();
 ```
 
 `AuthInterceptor` reads `accessToken` on every request and `refreshToken` on every 401 — see `04-networking.md` § AuthInterceptor.
-
-### Verification token bridge
-
-Used ONLY for cold-start magic links. `main.dart` saves it before `runApp`; the `VerificationSuccessPage` reads + clears it. See `_determineInitialRoute()` in `01-architecture.md` § Bootstrap order.
 
 ### Logout flow
 
 ```dart
 Future<void> logout(BuildContext context) async {
-  await sl<LocalStorage>().clearCredentialsToken();
+  await di<LocalStorage>().clearCredentialsToken();
   // Optionally also clear other user-specific prefs:
-  // await sl<LocalStorage>().remove(PrefKeys.LAST_SEEN_FOOD_ID);
+  // await di<LocalStorage>().remove(PrefKeys.LAST_SEEN_FOOD_ID);
   if (context.mounted) context.go(RoutePaths.AUTHENTICATION);
 }
 ```
@@ -191,8 +180,8 @@ If you ever add API response caching, also wipe that on logout — user-specific
 `lib/core/deeplink/deeplink_service.dart`. Registered as `lazySingleton`:
 
 ```dart
-sl.registerLazySingleton<DeepLinkService>(
-  () => DeepLinkService(navigatorKey, sl<AppLinks>(), sl<LocalStorage>()),
+di.registerLazySingleton<DeepLinkService>(
+  () => DeepLinkService(navigatorKey, di<AppLinks>(), di<LocalStorage>()),
 );
 ```
 
@@ -205,7 +194,7 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    _deeplink = sl<DeepLinkService>()..init();         // start subscription
+    _deeplink = di<DeepLinkService>()..init();         // start subscription
   }
 
   @override
@@ -219,44 +208,25 @@ class _AppState extends State<App> {
 
 `init()` subscribes to `AppLinks().uriLinkStream`; `dispose()` cancels.
 
-### Cold-start
+### Cold-start and warm-start — single handler
 
-Cold-start links resolve in `main.dart` BEFORE `runApp` (because `go_router` needs the initial route at construction):
+Both modes are handled by `DeepLinkService` (`lib/core/deeplink/deeplink_service.dart`). `app_links`' `uriLinkStream` emits the initial (cold-start) URI as its first event when the app is launched from a link, so one stream listener covers both cases.
+
+`main.dart` no longer inspects the link — it calls `runApp(const App())`. The router's `initialLocation` is always `RoutePaths.AUTHENTICATION`; `_guard` redirects a signed-in user to `HOME`. `DeepLinkService.init()` is called from `_AppState.initState()` and subscribes to `uriLinkStream`.
+
+On a matching URI (e.g., `/auth/verify?token=...`), `DeepLinkService._handle` navigates with:
 
 ```dart
-Future<String> _determineInitialRoute() async {
-  final link = await sl<AppLinks>().getInitialLink();
-  if (link == null || !link.path.endsWith('/auth/verify')) {
-    return RoutePaths.AUTHENTICATION;
-  }
-  final token = link.queryParameters['token'];
-  if (token == null || token.isEmpty) return RoutePaths.AUTHENTICATION;
-
-  final storage = sl<LocalStorage>();
-  if (await storage.signed) return RoutePaths.HOME;
-  if (isJWTExpired(token)) return RoutePaths.AUTHENTICATION;
-
-  await storage.saveVerificationToken(token);          // bridge: go_router has no initialExtra
-  return RoutePaths.VERIFICATION_SUCCESS;
-}
+ctx.go(RoutePaths.VERIFICATION_SUCCESS, extra: token);
 ```
 
-Pattern for adding a new cold-start handled path:
-
-1. Add a path matcher branch in `_determineInitialRoute()`.
-2. Decide what state must survive into the page — stash via `LocalStorage` (one-shot, page clears after read).
-3. Route to the right page.
-
-### Warm-start
-
-`DeepLinkService.init()` subscribes to `AppLinks().uriLinkStream`. On each new URI, it inspects the path and calls `navigatorKey.currentContext?.go(...)` (`navigatorKey` is exported from `app_router.dart`).
+`VerificationSuccessPage` reads `widget.token` (the `extra` value passed by `DeepLinkService`).
 
 For a new deep-link path:
 
 1. Add path + name to `RoutePaths` / `RouteNames`.
 2. Add the `GoRoute` to `app_router.dart`.
-3. Extend `DeepLinkService` with the new path matcher.
-4. Extend `_determineInitialRoute()` in `main.dart` if it should also work from cold-start.
+3. Extend `DeepLinkService._handle` with the new path matcher.
 
 ### Native intent / Universal Link config
 
@@ -469,7 +439,7 @@ Surface to user if a real need arises.
 | `Type 'ApiClient' is not a subtype` at startup | DI registration order wrong (e.g. resolving `ApiClient` before `Dio` registered) | Check `_initCore()` registers in order: `LocalStorage` → `Dio` → `ApiClient` → `AppLinks` → `DeepLinkService` |
 | `BASE_URL` is null / app hits the fallback URL | `.env` not loaded or `BASE_URL` not in it | Confirm `await dotenv.load()` runs before `initDependencies()` in `main.dart`; check `.env` file content |
 | 401 on every request | `accessToken` returns null OR refresh-token is also expired/revoked | `AuthInterceptor` clears tokens on refresh failure → guard bounces to `/authentication`. Re-login. |
-| Cold-start magic link → wrong page | `_determineInitialRoute()` matcher wrong OR `LocalStorage.saveVerificationToken` not called | Step-debug `_determineInitialRoute()`; verify `link.path` and query params |
+| Cold-start magic link → wrong page | `DeepLinkService._handle` matcher wrong OR `uriLinkStream` not emitting the initial link | Step-debug `DeepLinkService._handle`; verify `link.path` and query params; ensure `init()` is called in `_AppState.initState()` before the stream can fire |
 | Warm-start magic link does nothing | `DeepLinkService.init()` not called OR subscription cancelled | Check `_AppState.initState()` calls `..init()`; check the stream subscription isn't disposed too early |
 | `Pod install failed` (iOS) | Pods stale | `cd ios && pod install` (if that fails, `pod repo update` first) |
 | Android Gradle / JDK error | Toolchain mismatch | Confirm Gradle / AGP / Kotlin / Java versions match Flutter 3.41+ requirements |
@@ -482,7 +452,7 @@ Surface to user if a real need arises.
 - **Reading `dotenv.env['KEY']` without a fallback** — null at runtime if the key is missing. Always provide `?? 'fallback'`.
 - **Caching auth tokens in `LocalStorage.setString(...)` instead of `saveCredentialsToken(...)`** — bypasses secure storage. Use the typed token methods.
 - **Forgetting `await storage.init()` before `registerSingleton`** — `LateInitializationError` when something reads prefs.
-- **Bootstrap order swap** — `initDependencies()` BEFORE `dotenv.load()` makes `ApiClient`'s base URL fall back to the hardcoded default. Order: dotenv → DI → route → runApp.
+- **Bootstrap order swap** — `initDependencies()` BEFORE `dotenv.load()` makes `ApiClient`'s base URL fall back to the hardcoded default. Order: dotenv → DI → runApp.
 - **`navigatorKey` exported, but `currentContext` null** — if `DeepLinkService` fires before the first route mounts. Check `_AppState.initState()` runs after `runApp`.
 - **Manifest / Info.plist edits without verification** — App Store / Play Store will reject without the right usage descriptions / intent filters.
 
@@ -493,7 +463,7 @@ Surface to user if a real need arises.
 - `03-state-routing.md` — `_guard` reads `LocalStorage.signed`; `DeepLinkService` calls `navigatorKey.currentContext.go(...)`
 - `04-networking.md` — `AuthInterceptor` uses `LocalStorage` tokens; `ApiEndpoints.BASE_URL` reads from dotenv
 - `CLAUDE.md` § Critical rules — rule 9 (hands-off — incl. `pubspec.yaml`)
-- `lib/main.dart` — bootstrap (dotenv → DI → initial route → runApp)
+- `lib/main.dart` — bootstrap (dotenv → DI → runApp)
 - `lib/core/local/local_storage.dart` — full storage source
 - `lib/core/deeplink/deeplink_service.dart` — deep-link handler
 - `lib/core/network/api_endpoints.dart` — `BASE_URL` reads dotenv

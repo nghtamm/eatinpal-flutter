@@ -42,7 +42,7 @@ Triggers: "document X", "add a rule for Y", "update the harness for Z", "/write-
    - `✅ Correct` / `❌ Incorrect` pairs for rules.
    - Frontmatter for rules/skills/agents: `name`, `description` (one line, used by triggers).
    - Cross-references at the end in a `See also` section.
-4. Use eatinpal patterns in examples (bloc + Equatable, `sl<T>()`, `fpdart` Either with `.fold((left), (right))`, freezed model extends entity, `fvm flutter`/`fvm dart`, `AppPadding`/`AppRadius`/`AppColors`/`AppTypography`, `SIZED_BOX_H*`/`SIZED_BOX_W*`).
+4. Use eatinpal patterns in examples (bloc + Equatable, `di<T>()`, `fpdart` Either with `.fold((left), (right))`, freezed model extends entity, `fvm flutter`/`fvm dart`, `AppPadding`/`AppRadius`/`AppColors`/`AppTypography`, `SIZED_BOX_H*`/`SIZED_BOX_W*`).
 5. Don't duplicate `docs/` content in `.claude/rules/` or `.claude/skills/` — link to it.
 6. Run `fvm flutter analyze` if any code in `docs/` examples was copied from the repo and you've also touched code.
 7. Verify cross-reference links resolve.

@@ -29,7 +29,7 @@ A bug, test failure, or unexpected behavior. ALWAYS use this BEFORE proposing a 
 
 ## What it does
 
-1. **Reproduce** the issue (or confirm the user's repro). If you can't reproduce, that itself is a finding — surface it before continuing.
+1. **Reproduce** the issue (or confirm the user's repro). If you can't reproduce, that itself is a finding — surface it before continuing. If — and only if — the failure is in a CI / pipeline the project actually runs, pull the failing logs with `gh run view --log-failed` (or `gh run view <run-id> --log-failed`); skip this entirely when there's no pipeline.
 2. **Form ONE hypothesis at a time.** Test it with the cheapest tool: grep, read, log, breakpoint.
 3. Either:
    - Hypothesis disproven → record the evidence, form the next hypothesis.
@@ -56,6 +56,9 @@ PROPOSED FIX
   Change: <one-line summary>
   Why this works: <reason>
   Verify: <command or test>
+
+PREVENTION
+  <regression test / guard / lint that stops this class of bug recurring — hand to `tester` if it's a test>
 ```
 
 ## Anti-patterns

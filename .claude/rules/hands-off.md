@@ -84,7 +84,7 @@ class MetricsInterceptor extends Interceptor { ... }
 // User-approved 1-line edit to service_locator.dart:
 final dio = Dio()
   ..interceptors.addAll([
-    AuthInterceptor(sl<LocalStorage>()),
+    AuthInterceptor(di<LocalStorage>()),
     MetricsInterceptor(),             // new
     LoggingInterceptor(),
   ]);

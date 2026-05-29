@@ -183,7 +183,7 @@ Whenever a task matches an entry in the Sub-agent catalog below, the main agent 
 | File-level implementation plan before any writing | `planner` |
 | Audit the current git diff against rules + correctness | `reviewer` |
 | Bug, failing test, unexpected behaviour — root cause first | `debugger` |
-| Factual Q&A about the codebase with `file:line` citations | `researcher` |
+| Factual Q&A about the codebase (`file:line`) or external/web facts with cited sources | `researcher` |
 | Stateless view from a requirement / design / Pencil data | `ui-ux-designer` |
 | Scaffold a new module or add an API endpoint to an existing one | `feature-builder` |
 | Write unit / widget / integration tests | `tester` |

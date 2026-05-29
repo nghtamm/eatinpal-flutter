@@ -33,7 +33,7 @@ Rules:
 
 - Mark every leaf widget you can as `const`. The Dart linter (`prefer_const_constructors`) flags missing ones — treat warnings as errors.
 - Token classes (`AppPadding.BASE`, `SIZED_BOX_H16`, `AppColors.PRIMARY`) are already `const`-compatible — using them lets widgets be `const`.
-- `BlocProvider(create: (_) => sl<...>(), child: const ChildWidget())` — make the child `const` so it's not rebuilt when the BLoC re-emits.
+- `BlocProvider(create: (_) => di<...>(), child: const ChildWidget())` — make the child `const` so it's not rebuilt when the BLoC re-emits.
 
 ## Reactive granularity — scope `BlocBuilder` / `Obx`-equivalents narrowly
 
@@ -289,7 +289,7 @@ System a11y setting — ignoring it fails real-world accessibility.
 ## Hot-reload friendliness
 
 - BLoCs reset state when their `BlocProvider` rebuilds. Hot-reload preserves the BLoC instance (Flutter caches state objects); to force-reset, hot-restart instead.
-- `LocalStorage` persists across reloads + restarts. Use `await sl<LocalStorage>().clear()` from a debug menu if you want fast wipe.
+- `LocalStorage` persists across reloads + restarts. Use `await di<LocalStorage>().clear()` from a debug menu if you want fast wipe.
 - `freezed` codegen — after editing a model source, `flutter analyze` errors until you rerun build_runner. Keep `fvm dart run build_runner watch --delete-conflicting-outputs` in a side terminal during heavy model work.
 
 ## Memory hygiene
@@ -298,7 +298,7 @@ System a11y setting — ignoring it fails real-world accessibility.
 - **Cancel** in-flight requests on widget unmount via `Dio`'s `CancelToken`:
   ```dart
   final cancelToken = CancelToken();
-  // ... pass to sl<ApiClient>().request(cancelToken: cancelToken)
+  // ... pass to di<ApiClient>().request(cancelToken: cancelToken)
   @override
   void dispose() {
     cancelToken.cancel('widget disposed');

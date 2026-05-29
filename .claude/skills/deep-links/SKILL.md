@@ -1,6 +1,6 @@
 ---
 name: deep-links
-description: Use when adding deep-link support — Universal Links (iOS), App Links (Android), custom schemes, in-app links. Covers `go_router` parsing, path / query / extra params, auth-gated deep links (router guard interaction), cold-start (handled in `main.dart`) vs warm-start (via `DeepLinkService`).
+description: Use when adding deep-link support — Universal Links (iOS), App Links (Android), custom schemes, in-app links. Covers `go_router` parsing, path / query / extra params, auth-gated deep links (router guard interaction), cold-start (handled by `DeepLinkService` via `uriLinkStream`, same as warm-start).
 ---
 
 # Skill: Deep links
@@ -11,14 +11,14 @@ Adding support for opening the app at a specific route from outside — push not
 
 ## Architecture in EatinPal
 
-Two entry points cover both timing modes:
+One handler covers both timing modes:
 
 | Mode | Handler | File |
 |---|---|---|
-| **Cold-start** (app launches FROM the link) | `_determineInitialRoute()` reads `sl<AppLinks>().getInitialLink()` and may pre-stash data in `LocalStorage` | `lib/main.dart` |
-| **Warm-start** (app already running, OS forwards the URI) | `DeepLinkService.init()` listens to `AppLinks().uriLinkStream` and calls `context.go(...)` | `lib/core/deeplink/deeplink_service.dart` |
+| **Cold-start** (app launches FROM the link) | `DeepLinkService.init()` — `uriLinkStream` emits the initial URI as its first event | `lib/core/deeplink/deeplink_service.dart` |
+| **Warm-start** (app already running, OS forwards the URI) | `DeepLinkService.init()` — same `uriLinkStream` subscription | `lib/core/deeplink/deeplink_service.dart` |
 
-`DeepLinkService` is registered in `service_locator.dart` and started inside `App.initState()` (`sl<DeepLinkService>()..init()`).
+`main.dart` calls `runApp(const App())` with no route decision. `router()` always starts at `RoutePaths.AUTHENTICATION`; `_guard` redirects signed-in users to `HOME`. `DeepLinkService` is registered in `service_locator.dart` and started inside `App.initState()` (`di<DeepLinkService>()..init()`).
 
 ## What `go_router` gives you for free
 
@@ -63,7 +63,7 @@ Pattern (extend `_guard` only with explicit approval — see `.claude/rules/hand
 
 ```dart
 Future<String?> _guard(BuildContext context, GoRouterState state) async {
-  final signed = await sl<LocalStorage>().signed;
+  final signed = await di<LocalStorage>().signed;
   final destAuth = _DEST_AUTH.contains(state.matchedLocation);
 
   if (signed && destAuth) return RoutePaths.HOME;
@@ -78,8 +78,8 @@ For "remember pending deep link → resume after login": save the URI into `Loca
 
 | Start | Behaviour | Pitfall |
 |---|---|---|
-| **Cold-start from URL** | `main.dart` boots: `WidgetsFlutterBinding.ensureInitialized` → `dotenv.load` → `initDependencies` → `_determineInitialRoute` → `runApp(App(initDest: route))` → router resolves URI | Reading the link before DI is initialized → null `sl<AppLinks>()`. The current order (DI first) is correct. |
-| **Warm-start** | App already running, OS forwards intent → `AppLinks().uriLinkStream` fires → `DeepLinkService` dispatches `context.go(...)` | Two handlers racing. Only `DeepLinkService` should listen at runtime. |
+| **Cold-start from URL** | `main.dart` boots: `WidgetsFlutterBinding.ensureInitialized` → `dotenv.load` → `initDependencies` → `runApp(const App())` → `DeepLinkService.init()` in `initState` → `uriLinkStream` emits initial URI → `_handle` calls `context.go(...)` | `DeepLinkService.init()` must be called early enough in `initState` that the stream subscription is active before the URI event fires. |
+| **Warm-start** | App already running, OS forwards intent → `AppLinks().uriLinkStream` fires → same `DeepLinkService` subscription dispatches `context.go(...)` | Two listeners racing. Only `DeepLinkService` should subscribe to `uriLinkStream`. |
 
 ## Defensive parsing
 
@@ -147,7 +147,7 @@ Always test cold-start (kill the app first) — the warm-start path masks bootst
 
 - `docs/03-state-routing.md` § Deep links — full narrative
 - `docs/08-platform.md` — per-flavor host config
-- `lib/main.dart` — cold-start handler `_determineInitialRoute`
-- `lib/core/deeplink/deeplink_service.dart` — warm-start listener
+- `lib/main.dart` — bootstrap (dotenv → DI → runApp; no route decision)
+- `lib/core/deeplink/deeplink_service.dart` — single uriLinkStream listener (cold + warm-start)
 - `lib/app/router/app_router.dart` — `_guard` for auth gating
 - Flutter / go_router deep linking: <https://docs.flutter.dev/ui/navigation/deep-linking>

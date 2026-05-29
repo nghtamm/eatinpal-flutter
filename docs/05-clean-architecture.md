@@ -78,9 +78,9 @@ abstract class AuthRepository {
     required String name,
   });
 
-  Future<Either<AppException, String>> resendVerification({required String email});
+  Future<Either<AppException, String>> resend({required String email});
   Future<Either<AppException, String>> verify({required String token});
-  Future<Either<AppException, String>> verifiedLogin({required String token});
+  Future<Either<AppException, String>> magicLink({required String token});
 }
 ```
 
@@ -113,24 +113,24 @@ class NoParams {
 
 ```dart
 // ✅
-class ResendVerificationUseCase extends UseCase<String, String> {
+class ResendUseCase extends UseCase<String, String> {
   final AuthRepository _repository;
-  ResendVerificationUseCase(this._repository);
+  ResendUseCase(this._repository);
 
   @override
   Future<Either<AppException, String>> call(String email) {
-    return _repository.resendVerification(email: email);
+    return _repository.resend(email: email);
   }
 }
 
 // Call site
-final result = await sl<ResendVerificationUseCase>()(email);
+final result = await di<ResendUseCase>()(email);
 ```
 
 The signature `UseCase<String, String>` reads as "returns `String`, takes `String`" — the second param is the primitive, no wrapper. From `auth_bloc.dart`:
 
 ```dart
-final result = await _resendVerification(event.email);
+final result = await _resend(event.email);
 ```
 
 #### Multi-field params — wrap in a class
@@ -153,7 +153,7 @@ class LoginUseCase extends UseCase<String, LoginParams> {
 }
 
 // Call site
-final result = await sl<LoginUseCase>()(
+final result = await di<LoginUseCase>()(
   LoginParams(email: event.email, password: event.password),
 );
 ```
@@ -174,7 +174,7 @@ class GetProfileUseCase extends UseCaseNoParams<UserEntity> {
 }
 
 // Call site
-final result = await sl<GetProfileUseCase>()();
+final result = await di<GetProfileUseCase>()();
 ```
 
 ## Data layer (depends on `domain`, never the other way)
@@ -240,7 +240,7 @@ Key points:
 - One class per module's service. If the module has many endpoints, group them in this single class — no need to split unless it exceeds ~300 lines.
 - Constructor takes `ApiClient` (positional, private) + maybe `LocalStorage`. `const` where possible.
 - Each method maps 1:1 to an endpoint.
-- Tuple payloads use Dart 3.0+ records (`typedef LoginResponse = ({UserModel user, TokensModel tokens});`).
+- Tuple payloads use Dart 3.0+ records (`typedef LoginResponse = ({UserModel user, CredentialsModel credentials});`).
 
 ### Repository implementation
 
@@ -262,8 +262,8 @@ class AuthRepositoryImpl implements AuthRepository {
     final result = await _service.login(email: email, password: password);
     return result.fold((left) async => Left(left), (right) async {
       await _storage.saveCredentialsToken(
-        accessToken: right.data.tokens.accessToken,
-        refreshToken: right.data.tokens.refreshToken,
+        accessToken: right.data.credentials.accessToken,
+        refreshToken: right.data.credentials.refreshToken,
       );
       return Right(right.message);
     });
@@ -301,7 +301,7 @@ See `03-state-routing.md` for the full BLoC reference. Summary:
 - `<Name>Bloc extends Bloc<<Name>Event, <Name>State>` — depends on usecases via constructor injection.
 - Events and states extend `Equatable` (NEVER freezed).
 - `registerFactory` for the BLoC in `service_locator.dart` — new instance per page.
-- Pages use `BlocProvider(create: (_) => sl<<Name>Bloc>(), child: ...)`.
+- Pages use `BlocProvider(create: (_) => di<<Name>Bloc>(), child: ...)`.
 - Side-effects (snackbar, navigation) via `BlocListener`, UI rebuilds via `BlocBuilder`.
 
 Real BLoC handler that exercises the whole pipeline:
@@ -356,9 +356,9 @@ AuthBloc            extends Bloc<AuthEvent, AuthState>     [registerFactory]
    │
    ├─→ LoginUseCase                  extends UseCase<String, LoginParams>      [lazySingleton]
    ├─→ RegisterUseCase                extends UseCase<String, RegisterParams>  [lazySingleton]
-   ├─→ ResendVerificationUseCase      extends UseCase<String, String>          [lazySingleton]
+   ├─→ ResendUseCase      extends UseCase<String, String>          [lazySingleton]
    ├─→ VerifyUseCase                  extends UseCase<String, String>          [lazySingleton]
-   └─→ VerifiedLoginUseCase           extends UseCase<String, String>          [lazySingleton]
+   └─→ MagicLinkUseCase           extends UseCase<String, String>          [lazySingleton]
             │
             ▼
         AuthRepository (abstract)
@@ -396,7 +396,7 @@ Every arrow is a constructor parameter. Every node lives in `get_it`.
 - **Entity holds `Map<String, dynamic>` or freezed annotations** — entities are pure Dart, no codegen.
 - **Service returns `T` directly (throws on error)** — `ApiClient` already catches `DioException`. Services return `Either<AppException, ApiResult<T>>`.
 - **UseCase calls another UseCase** — discouraged. UseCases are domain primitives. Combining business actions belongs in a higher-level usecase, or in the BLoC orchestrating two UseCases sequentially (see `AuthBloc._onVerifyFromLink`).
-- **Forgetting to register a new layer in `service_locator.dart`** — `sl<NewBloc>()` throws "Type not registered". Always wire the full chain.
+- **Forgetting to register a new layer in `service_locator.dart`** — `di<NewBloc>()` throws "Type not registered". Always wire the full chain.
 - **Wrong registration mode** — registering a BLoC as `lazySingleton` means subsequent page entries share state. BLoCs are factory.
 - **Models extend (not implement) the entity** — works only if the entity isn't `abstract`; freezed prefers `implements`. Standardise on `implements`.
 - **Repository methods named after HTTP verbs (`postLogin`, `getProfile`)** — name them after the business action (`login`, `getProfile` is okay, `register` is okay; `postLogin` is not).

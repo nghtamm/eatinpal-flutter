@@ -8,7 +8,7 @@ The deep reference for how state and navigation work in this codebase. Covers `f
 |---|---|
 | `flutter_bloc` | All reactive state. BLoCs orchestrate UseCases → emit states. |
 | `equatable` | `Equatable` mixin on events / states for value equality + correct rebuild semantics. |
-| `get_it` | Dependency injection — single instance `sl` in `core/di/service_locator.dart`. |
+| `get_it` | Dependency injection — single instance `di` in `core/di/service_locator.dart`. |
 | `go_router` | All navigation — `context.go`, `context.push`, `context.pop`, `context.replace`, `context.goNamed`. |
 
 **Forbidden** in this project:
@@ -105,9 +105,9 @@ class AuthLoginSubmitted extends AuthEvent {
   List<Object?> get props => [email, password];
 }
 
-class AuthResendVerificationRequested extends AuthEvent {
+class AuthResendRequested extends AuthEvent {
   final String email;
-  const AuthResendVerificationRequested(this.email);
+  const AuthResendRequested(this.email);
 
   @override
   List<Object?> get props => [email];
@@ -120,25 +120,25 @@ Bloc:
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUseCase _register;
   final LoginUseCase _login;
-  final ResendVerificationUseCase _resendVerification;
+  final ResendUseCase _resend;
   final VerifyUseCase _verify;
-  final VerifiedLoginUseCase _verifiedLogin;
+  final MagicLinkUseCase _magicLink;
 
   AuthBloc({
     required RegisterUseCase register,
     required LoginUseCase login,
-    required ResendVerificationUseCase resendVerification,
+    required ResendUseCase resend,
     required VerifyUseCase verify,
-    required VerifiedLoginUseCase verifiedLogin,
+    required MagicLinkUseCase magicLink,
   })  : _register = register,
         _login = login,
-        _resendVerification = resendVerification,
+        _resend = resend,
         _verify = verify,
-        _verifiedLogin = verifiedLogin,
+        _magicLink = magicLink,
         super(const AuthInitial()) {
     on<AuthRegisterSubmitted>(_onRegister);
     on<AuthLoginSubmitted>(_onLogin);
-    on<AuthResendVerificationRequested>(_onResendVerification);
+    on<AuthResendRequested>(_onResend);
     on<AuthVerifyFromLinkRequested>(_onVerifyFromLink);
   }
 
@@ -228,14 +228,14 @@ class AuthenticationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<AuthBloc>(),
+      create: (_) => di<AuthBloc>(),
       child: const _AuthenticationView(),
     );
   }
 }
 ```
 
-Because `AuthBloc` is registered with `sl.registerFactory(...)`, each `sl<AuthBloc>()` call yields a NEW instance — re-entering the page resets state.
+Because `AuthBloc` is registered with `di.registerFactory(...)`, each `di<AuthBloc>()` call yields a NEW instance — re-entering the page resets state.
 
 For consumers:
 
@@ -304,24 +304,24 @@ class FoodListBloc extends Bloc<FoodListEvent, FoodListState> {
 
 ## Dependency injection — `get_it`
 
-The single instance `sl` lives in `lib/core/di/service_locator.dart`. Everything registered there is resolvable from anywhere via `sl<T>()`.
+The single instance `di` lives in `lib/core/di/service_locator.dart`. Everything registered there is resolvable from anywhere via `di<T>()`.
 
 ### Registration patterns
 
 | Pattern | Use | Lifetime |
 |---|---|---|
-| `sl.registerSingleton<T>(instance)` | Async-initialised singleton (e.g. `LocalStorageImpl` after `await storage.init()`) | One instance forever |
-| `sl.registerLazySingleton<T>(() => ...)` | Default for services, repositories, usecases, `ApiClient`, `Dio` | One instance, created on first `sl<T>()` |
-| `sl.registerFactory<T>(() => ...)` | BLoCs (new instance per `sl<AuthBloc>()` call, so state resets on page re-entry) | New instance every call |
+| `di.registerSingleton<T>(instance)` | Async-initialised singleton (e.g. `LocalStorageImpl` after `await storage.init()`) | One instance forever |
+| `di.registerLazySingleton<T>(() => ...)` | Default for services, repositories, usecases, `ApiClient`, `Dio` | One instance, created on first `di<T>()` |
+| `di.registerFactory<T>(() => ...)` | BLoCs (new instance per `di<AuthBloc>()` call, so state resets on page re-entry) | New instance every call |
 
 ### Resolution
 
 ```dart
 // In a page's BlocProvider:
-BlocProvider(create: (_) => sl<AuthBloc>(), child: ...)
+BlocProvider(create: (_) => di<AuthBloc>(), child: ...)
 
 // In a one-off (e.g. router guard, deep-link handler):
-final signed = await sl<LocalStorage>().signed;
+final signed = await di<LocalStorage>().signed;
 ```
 
 Never resolve inside a `build(...)` method — it's a code smell. Resolve at the entry point (page, router, BLoC constructor) and pass via constructor / `BlocProvider`.
@@ -338,12 +338,12 @@ Future<void> initDependencies() async {
 }
 
 void _initFood() {
-  sl.registerLazySingleton(() => FoodService(sl<ApiClient>()));
-  sl.registerLazySingleton<FoodRepository>(
-    () => FoodRepositoryImpl(sl<FoodService>()),
+  di.registerLazySingleton(() => FoodService(di<ApiClient>()));
+  di.registerLazySingleton<FoodRepository>(
+    () => FoodRepositoryImpl(di<FoodService>()),
   );
-  sl.registerLazySingleton(() => GetFoodListUseCase(sl<FoodRepository>()));
-  sl.registerFactory(() => FoodListBloc(getList: sl<GetFoodListUseCase>()));
+  di.registerLazySingleton(() => GetFoodListUseCase(di<FoodRepository>()));
+  di.registerFactory(() => FoodListBloc(getList: di<GetFoodListUseCase>()));
 }
 ```
 
@@ -396,7 +396,7 @@ GoRoute(
 ),
 ```
 
-If a value must survive cold-start (deep links), put it in path or query — never in `extra`. The cold-start magic-link flow demonstrates the alternative: stash it in `LocalStorage.saveVerificationToken(token)` before `runApp`, read it inside the page, then call `clearVerificationToken()`.
+If a value must survive cold-start (deep links), put it in path or query — never in `extra`. For the magic-link flow, `DeepLinkService` passes the token via `extra` in a `context.go(RoutePaths.VERIFICATION_SUCCESS, extra: token)` call; `VerificationSuccessPage` reads the token from `widget.token` (the `extra` value); there is no storage fallback.
 
 ### Auth guard
 
@@ -412,7 +412,7 @@ const _DEST_AUTH = {
 };
 
 Future<String?> _guard(BuildContext context, GoRouterState state) async {
-  final signed = await sl<LocalStorage>().signed;
+  final signed = await di<LocalStorage>().signed;
   final destAuth = _DEST_AUTH.contains(state.matchedLocation);
 
   if (signed && destAuth) return RoutePaths.HOME;       // logged-in user can't view auth pages
@@ -550,7 +550,7 @@ Don't reach for another module's BLoC from outside its provider scope. If state 
 // In app.dart (only if truly app-wide):
 return MultiBlocProvider(
   providers: [
-    BlocProvider(create: (_) => sl<SessionBloc>()),
+    BlocProvider(create: (_) => di<SessionBloc>()),
   ],
   child: MaterialApp.router(...),
 );
@@ -562,42 +562,26 @@ For one-shot parent ← child return value, use `context.push<T>(...)` + `contex
 
 This codebase handles deep links via the `app_links` package + a custom `DeepLinkService` (`lib/core/deeplink/deeplink_service.dart`).
 
-### Cold-start
+### Cold-start and warm-start — single handler
 
-Resolved in `main.dart` BEFORE `runApp`:
+Both modes are handled in `DeepLinkService` (`lib/core/deeplink/deeplink_service.dart`). `app_links`' `uriLinkStream` emits the initial (cold-start) URI as its first event when the app launches from a link, so a single stream listener covers both cases.
+
+`main.dart` no longer inspects the link — it simply calls `runApp(const App())`. The router's `initialLocation` is always `RoutePaths.AUTHENTICATION`; `_guard` immediately redirects a signed-in user to `HOME`.
+
+`DeepLinkService.init()` subscribes to `AppLinks().uriLinkStream` in `_AppState.initState()`; `dispose()` cancels the subscription in `_AppState.dispose()`. On a matching URI (e.g., `/auth/verify?token=...`), `_handle` calls:
 
 ```dart
-Future<String> _determineInitialRoute() async {
-  final link = await sl<AppLinks>().getInitialLink();
-  if (link == null || !link.path.endsWith('/auth/verify')) {
-    return RoutePaths.AUTHENTICATION;
-  }
-  final token = link.queryParameters['token'];
-  if (token == null || token.isEmpty) return RoutePaths.AUTHENTICATION;
-  final storage = sl<LocalStorage>();
-  if (await storage.signed) return RoutePaths.HOME;
-  if (isJWTExpired(token)) return RoutePaths.AUTHENTICATION;
-
-  // Cold-start carrier: go_router không hỗ trợ initialExtra,
-  // dùng storage làm bridge một lần. VerificationSuccessPage sẽ đọc + clear.
-  await storage.saveVerificationToken(token);
-  return RoutePaths.VERIFICATION_SUCCESS;
-}
+ctx.go(RoutePaths.VERIFICATION_SUCCESS, extra: token);
 ```
 
-Pattern: inspect the link, decide the initial route, possibly stash a one-shot value in `LocalStorage` (since `go_router` doesn't support `initialExtra`). The destination page reads + clears it.
-
-### Warm-start
-
-`DeepLinkService` subscribes to `AppLinks().uriLinkStream` in its `init()`. On a new URI, it inspects the path and calls `navigatorKey.currentContext?.go(...)` to route. `init()` is called from `_AppState.initState()`; `dispose()` is called from `_AppState.dispose()` (cancels the subscription).
+`VerificationSuccessPage` reads `widget.token` (the `extra` value); there is no storage fallback.
 
 For new deep-link routes:
 
 1. Add the path + name constant to `RoutePaths` / `RouteNames`.
 2. Add the route block to `app_router.dart`.
-3. Extend `DeepLinkService._handleLink(Uri uri)` (or equivalent) with the new path matcher.
-4. Extend `main.dart`'s `_determineInitialRoute()` if the link should work from cold-start.
-5. Wire native intent filters / Universal Links — `android/app/src/main/AndroidManifest.xml` + `ios/Runner/Info.plist` + `ios/Runner/Runner.entitlements`.
+3. Extend `DeepLinkService._handle(Uri uri)` with the new path matcher.
+4. Wire native intent filters / Universal Links — `android/app/src/main/AndroidManifest.xml` + `ios/Runner/Info.plist` + `ios/Runner/Runner.entitlements`.
 
 ## Reactive controller patterns
 
@@ -652,7 +636,7 @@ Future<void> _onVerifyFromLink(
     return;
   }
 
-  final loginResult = await _verifiedLogin(event.token);
+  final loginResult = await _magicLink(event.token);
   loginResult.fold(
     (left) => emit(AuthFailure(left.message)),
     (right) => emit(AuthAuthenticated(right)),
@@ -666,7 +650,7 @@ Pattern: fold to a `T?` to bail early, then chain the next call.
 
 - **Using `Navigator.pushNamed(...)`** — bypasses `go_router` guards. Use `context.go(...)` / `context.push(...)`.
 - **Mounting a `BlocProvider` at the wrong level** — child can't find the BLoC. Provide as close to the consuming tree as possible, but above all consumers.
-- **Resolving `sl<Bloc>()` inside `build(...)`** — creates a new BLoC every rebuild (since registered factory). Resolve once at the entry point.
+- **Resolving `di<Bloc>()` inside `build(...)`** — creates a new BLoC every rebuild (since registered factory). Resolve once at the entry point.
 - **Reaching another module's BLoC** — out of provider scope = `ProviderNotFoundException`. Share via a singleton `Repository` or lift the provider.
 - **Forgetting `props` on an `Equatable` event/state** — `bloc.emit` won't fire because `next == current`. Always override `props`.
 - **Using freezed on a BLoC event/state** — forbidden by the `bloc-no-freezed` rule.

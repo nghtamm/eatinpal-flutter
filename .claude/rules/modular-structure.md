@@ -15,7 +15,7 @@ lib/modules/<name>/
 ├── data/
 │   ├── models/<name>_model.dart        # freezed + json_serializable, extends entity
 │   ├── repository/<name>_repository_impl.dart
-│   └── services/<name>_service.dart    # calls sl<ApiClient>().request(...)
+│   └── services/<name>_service.dart    # calls _client.request(...)
 ├── domain/
 │   ├── entities/<name>_entity.dart
 │   ├── repository/<name>_repository.dart   # abstract
@@ -46,7 +46,7 @@ UseCase  ─── returns Future<Either<AppException, T>>
     ↓
 Repository (abstract) ←──── RepositoryImpl
                                 ↓
-                            Service ─── calls sl<ApiClient>().request(...)
+                            Service ─── calls _client.request(...)
                                 ↓
                            ApiClient ─── returns Either<AppException, ApiResult<T>>
 ```
@@ -66,16 +66,17 @@ Each module's `<name>.dart` re-exports the consumer-facing surface. Example:
 
 ```dart
 // lib/modules/auth/auth.dart
-export 'data/models/login_response_model.dart';
+export 'data/models/credentials_model.dart';
 export 'data/models/user_model.dart';
 export 'data/repository/auth_repository_impl.dart';
 export 'data/services/auth_service.dart';
+export 'domain/entities/credentials_entity.dart';
 export 'domain/entities/user_entity.dart';
 export 'domain/repository/auth_repository.dart';
 export 'domain/usecases/login_usecase.dart';
 export 'domain/usecases/register_usecase.dart';
-export 'domain/usecases/resend_verification_usecase.dart';
-export 'domain/usecases/verified_login_usecase.dart';
+export 'domain/usecases/resend_usecase.dart';
+export 'domain/usecases/magic_link_usecase.dart';
 export 'domain/usecases/verify_usecase.dart';
 export 'presentation/bloc/auth_bloc.dart';
 export 'presentation/bloc/auth_event.dart';
@@ -111,19 +112,19 @@ GoRoute(
 import 'package:eatinpal/modules/auth/auth.dart';
 
 void _registerAuthModule() {
-  sl
-    ..registerLazySingleton<AuthService>(() => AuthService())
+  di
+    ..registerLazySingleton<AuthService>(() => AuthService(di()))
     ..registerLazySingleton<AuthRepository>(
-      () => AuthRepositoryImpl(sl(), sl()),
+      () => AuthRepositoryImpl(di(), di()),
     )
-    ..registerLazySingleton(() => LoginUseCase(sl()))
-    ..registerLazySingleton(() => RegisterUseCase(sl()))
+    ..registerLazySingleton(() => LoginUseCase(di()))
+    ..registerLazySingleton(() => RegisterUseCase(di()))
     ..registerFactory(() => AuthBloc(
-          register: sl(),
-          login: sl(),
-          resendVerification: sl(),
-          verify: sl(),
-          verifiedLogin: sl(),
+          register: di(),
+          login: di(),
+          resend: di(),
+          verify: di(),
+          magicLink: di(),
         ));
 }
 ```
