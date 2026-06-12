@@ -83,4 +83,39 @@ class AuthService {
       },
     );
   }
+
+  Future<Either<AppException, ApiResult<void>>> forgotPassword({
+    required String email,
+  }) {
+    return _client.request(
+      endpoint: ApiEndpoints.FORGOT_PASSWORD,
+      method: RestMethod.POST,
+      data: {'email': email},
+      parser: (_) {},
+    );
+  }
+
+  Future<Either<AppException, ApiResult<void>>> verifyOTP({
+    required String email,
+    required String otp,
+  }) {
+    return _client.request(
+      endpoint: ApiEndpoints.VERIFY_OTP,
+      method: RestMethod.POST,
+      data: {'email': email, 'otp': otp},
+      parser: (_) {},
+    );
+  }
+
+  Future<Either<AppException, ApiResult<void>>> resetPassword({
+    required String email,
+    required String newPassword,
+  }) {
+    return _client.request(
+      endpoint: ApiEndpoints.RESET_PASSWORD,
+      method: RestMethod.POST,
+      data: {'email': email, 'new_password': newPassword},
+      parser: (_) {},
+    );
+  }
 }

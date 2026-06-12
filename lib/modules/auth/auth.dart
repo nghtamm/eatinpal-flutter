@@ -7,6 +7,9 @@ export 'domain/usecases/register_usecase.dart';
 export 'domain/usecases/resend_usecase.dart';
 export 'domain/usecases/verify_usecase.dart';
 export 'domain/usecases/magic_link_usecase.dart';
+export 'domain/usecases/forgot_password_usecase.dart';
+export 'domain/usecases/verify_otp_usecase.dart';
+export 'domain/usecases/reset_password_usecase.dart';
 
 // [DATA]
 export 'data/models/user_model.dart';
@@ -18,8 +21,15 @@ export 'data/repository/auth_repository_impl.dart';
 export 'presentation/bloc/auth_bloc.dart';
 export 'presentation/bloc/auth_event.dart';
 export 'presentation/bloc/auth_state.dart';
+export 'presentation/bloc/forgot_password_bloc.dart';
+export 'presentation/bloc/forgot_password_event.dart';
+export 'presentation/bloc/forgot_password_state.dart';
 export 'presentation/widgets/auth_textfield.dart';
+export 'presentation/widgets/otp_input.dart';
 export 'presentation/pages/authentication_page.dart';
+export 'presentation/pages/forgot_password_page.dart';
+export 'presentation/pages/enter_code_page.dart';
+export 'presentation/pages/new_password_page.dart';
 export 'presentation/pages/register_page.dart';
 export 'presentation/pages/login_page.dart';
 export 'presentation/pages/verify_email_page.dart';

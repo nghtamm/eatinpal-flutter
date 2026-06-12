@@ -19,10 +19,7 @@ class ApiClient {
       receiveTimeout: const Duration(seconds: 15),
     );
 
-    _dio.interceptors.addAll([
-      AuthInterceptor(storage),
-      LoggingInterceptor(),
-    ]);
+    _dio.interceptors.addAll([AuthInterceptor(storage), LoggingInterceptor()]);
   }
 
   Future<Either<AppException, ApiResult<T>>> request<T>({
