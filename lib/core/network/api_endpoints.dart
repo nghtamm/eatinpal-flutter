@@ -11,4 +11,7 @@ abstract final class ApiEndpoints {
   static const String RESEND = '/auth/resend';
   static const String VERIFY = '/auth/verify';
   static const String MAGIC_LINK = '/auth/magic-link';
+  static const String FORGOT_PASSWORD = '/auth/forgot-password';
+  static const String VERIFY_OTP = '/auth/verify-otp';
+  static const String RESET_PASSWORD = '/auth/reset-password';
 }

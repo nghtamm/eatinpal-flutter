@@ -48,6 +48,9 @@ void _initAuth() {
   di.registerLazySingleton(() => ResendUseCase(di<AuthRepository>()));
   di.registerLazySingleton(() => VerifyUseCase(di<AuthRepository>()));
   di.registerLazySingleton(() => MagicLinkUseCase(di<AuthRepository>()));
+  di.registerLazySingleton(() => ForgotPasswordUseCase(di<AuthRepository>()));
+  di.registerLazySingleton(() => VerifyOTPUseCase(di<AuthRepository>()));
+  di.registerLazySingleton(() => ResetPasswordUseCase(di<AuthRepository>()));
 
   // [BLOCS]
   di.registerFactory(
@@ -57,6 +60,13 @@ void _initAuth() {
       resend: di<ResendUseCase>(),
       verify: di<VerifyUseCase>(),
       magicLink: di<MagicLinkUseCase>(),
+    ),
+  );
+  di.registerFactory(
+    () => ForgotPasswordBloc(
+      forgotPassword: di<ForgotPasswordUseCase>(),
+      verifyOTP: di<VerifyOTPUseCase>(),
+      resetPassword: di<ResetPasswordUseCase>(),
     ),
   );
 }

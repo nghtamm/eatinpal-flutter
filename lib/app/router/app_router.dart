@@ -12,6 +12,9 @@ const _DEST_AUTH = {
   RoutePaths.LOGIN,
   RoutePaths.VERIFY_EMAIL,
   RoutePaths.VERIFICATION_SUCCESS,
+  RoutePaths.FORGOT_PASSWORD,
+  RoutePaths.VERIFY_OTP,
+  RoutePaths.RESET_PASSWORD,
 };
 
 GoRouter router() {
@@ -54,6 +57,27 @@ GoRouter router() {
         name: RouteNames.VERIFICATION_SUCCESS,
         builder: (_, state) {
           return VerificationSuccessPage(token: state.extra as String?);
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.FORGOT_PASSWORD,
+        name: RouteNames.FORGOT_PASSWORD,
+        builder: (_, _) {
+          return const ForgotPasswordPage();
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.VERIFY_OTP,
+        name: RouteNames.VERIFY_OTP,
+        builder: (_, state) {
+          return EnterCodePage(email: state.extra as String?);
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.RESET_PASSWORD,
+        name: RouteNames.RESET_PASSWORD,
+        builder: (_, state) {
+          return NewPasswordPage(email: state.extra as String?);
         },
       ),
       GoRoute(

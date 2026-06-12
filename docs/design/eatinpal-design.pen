@@ -1,5 +1,5 @@
 {
-  "version": "2.11",
+  "version": "2.13",
   "children": [
     {
       "type": "frame",
@@ -102,11 +102,9 @@
               "width": 311,
               "fill": "$field-fill",
               "cornerRadius": "$radius-lg",
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$border-soft"
-              },
+              "stroke": "$border-soft",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
               "gap": 8,
               "padding": [
                 14,
@@ -123,7 +121,8 @@
                   "width": "fill_container",
                   "content": "jane@example.com",
                   "fontFamily": "$font-body",
-                  "fontSize": 15
+                  "fontSize": 15,
+                  "fontWeight": "normal"
                 }
               ]
             }
@@ -150,10 +149,8 @@
               "width": 44,
               "height": 44,
               "fill": "#00000000",
-              "stroke": {
-                "thickness": 0,
-                "fill": "#00000000"
-              },
+              "stroke": "#00000000",
+              "strokeAlignment": "inner",
               "padding": [
                 0,
                 4,
@@ -164,12 +161,12 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "icon_font",
+                  "type": "icon",
                   "id": "DCLNc",
                   "width": 28,
                   "height": 28,
-                  "iconFontName": "chevron-left",
-                  "iconFontFamily": "lucide",
+                  "icon": "chevron-left",
+                  "library": "lucide",
                   "fill": "$text-primary"
                 }
               ]
@@ -196,12 +193,12 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "icon_font",
+                  "type": "icon",
                   "id": "JrTYG",
                   "width": 18,
                   "height": 18,
-                  "iconFontName": "leaf",
-                  "iconFontFamily": "lucide",
+                  "icon": "leaf",
+                  "library": "lucide",
                   "fill": "$primary-dark"
                 }
               ]
@@ -281,27 +278,27 @@
               "height": 180
             },
             {
-              "type": "icon_font",
+              "type": "icon",
               "id": "PaGSo",
               "x": 300,
               "y": 60,
               "rotation": 340,
               "width": 28,
               "height": 28,
-              "iconFontName": "leaf",
-              "iconFontFamily": "lucide",
+              "icon": "leaf",
+              "library": "lucide",
               "fill": "#FFFFFFBB"
             },
             {
-              "type": "icon_font",
+              "type": "icon",
               "id": "pFFDL",
               "x": 40,
               "y": 200,
               "rotation": 29.999999999999996,
               "width": 22,
               "height": 22,
-              "iconFontName": "leaf",
-              "iconFontFamily": "lucide",
+              "icon": "leaf",
+              "library": "lucide",
               "fill": "#FFFFFF99"
             }
           ]
@@ -376,12 +373,12 @@
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "icon_font",
+                          "type": "icon",
                           "id": "BBQ8f",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "leaf",
-                          "iconFontFamily": "lucide",
+                          "icon": "leaf",
+                          "library": "lucide",
                           "fill": "$primary-dark"
                         }
                       ]
@@ -454,7 +451,8 @@
               "content": "A simple way to track what you eat and slowly shape better habits around it.",
               "lineHeight": 1.5,
               "fontFamily": "$font-body",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -555,11 +553,9 @@
                   "width": "fill_container",
                   "fill": "$surface-card",
                   "cornerRadius": "$radius-full",
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1,
-                    "fill": "$border-soft"
-                  },
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
                   "gap": 8,
                   "padding": [
                     12,
@@ -594,11 +590,9 @@
                   "width": "fill_container",
                   "fill": "$surface-card",
                   "cornerRadius": "$radius-full",
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1,
-                    "fill": "$border-soft"
-                  },
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
                   "gap": 8,
                   "padding": [
                     12,
@@ -608,12 +602,12 @@
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "icon_font",
+                      "type": "icon",
                       "id": "vF9ZF",
                       "width": 20,
                       "height": 20,
-                      "iconFontName": "apple",
-                      "iconFontFamily": "lucide",
+                      "icon": "apple",
+                      "library": "lucide",
                       "fill": "$text-primary"
                     },
                     {
@@ -667,10 +661,8 @@
               "width": 44,
               "height": 44,
               "fill": "#00000000",
-              "stroke": {
-                "thickness": 0,
-                "fill": "#00000000"
-              },
+              "stroke": "#00000000",
+              "strokeAlignment": "inner",
               "padding": [
                 0,
                 4,
@@ -681,12 +673,12 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "icon_font",
+                  "type": "icon",
                   "id": "SjKzw",
                   "width": 28,
                   "height": 28,
-                  "iconFontName": "chevron-left",
-                  "iconFontFamily": "lucide",
+                  "icon": "chevron-left",
+                  "library": "lucide",
                   "fill": "$text-primary"
                 }
               ]
@@ -758,7 +750,8 @@
               "content": "Log in to EatinPal to continue.",
               "lineHeight": 1.5,
               "fontFamily": "$font-body",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -789,11 +782,9 @@
                   "width": "fill_container",
                   "fill": "$field-fill",
                   "cornerRadius": "$radius-lg",
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1,
-                    "fill": "$border-soft"
-                  },
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
                   "gap": 8,
                   "padding": [
                     14,
@@ -809,7 +800,8 @@
                       "width": "fill_container",
                       "content": "jane@example.com",
                       "fontFamily": "$font-body",
-                      "fontSize": 15
+                      "fontSize": 15,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -844,11 +836,9 @@
                   "width": "fill_container",
                   "fill": "$field-fill",
                   "cornerRadius": "$radius-lg",
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1,
-                    "fill": "$border-soft"
-                  },
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
                   "gap": 8,
                   "padding": [
                     14,
@@ -864,15 +854,16 @@
                       "width": "fill_container",
                       "content": "••••••••••",
                       "fontFamily": "$font-body",
-                      "fontSize": 15
+                      "fontSize": 15,
+                      "fontWeight": "normal"
                     },
                     {
-                      "type": "icon_font",
+                      "type": "icon",
                       "id": "DZgVv",
                       "width": 20,
                       "height": 20,
-                      "iconFontName": "eye-off",
-                      "iconFontFamily": "lucide",
+                      "icon": "eye-off",
+                      "library": "lucide",
                       "fill": "$text-tertiary"
                     }
                   ]
@@ -974,10 +965,8 @@
               "width": 44,
               "height": 44,
               "fill": "#00000000",
-              "stroke": {
-                "thickness": 0,
-                "fill": "#00000000"
-              },
+              "stroke": "#00000000",
+              "strokeAlignment": "inner",
               "padding": [
                 0,
                 4,
@@ -988,12 +977,12 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "icon_font",
+                  "type": "icon",
                   "id": "zT3ji",
                   "width": 28,
                   "height": 28,
-                  "iconFontName": "chevron-left",
-                  "iconFontFamily": "lucide",
+                  "icon": "chevron-left",
+                  "library": "lucide",
                   "fill": "$text-primary"
                 }
               ]
@@ -1058,7 +1047,8 @@
               "content": "Create an account to begin your journey toward healthier meals and more mindful habits.",
               "lineHeight": 1.5,
               "fontFamily": "$font-body",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             },
             {
               "type": "frame",
@@ -1089,11 +1079,9 @@
                   "width": "fill_container",
                   "fill": "$field-fill",
                   "cornerRadius": "$radius-lg",
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1,
-                    "fill": "$border-soft"
-                  },
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
                   "gap": 8,
                   "padding": [
                     14,
@@ -1109,7 +1097,8 @@
                       "width": "fill_container",
                       "content": "Jane Doe",
                       "fontFamily": "$font-body",
-                      "fontSize": 15
+                      "fontSize": 15,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -1144,11 +1133,9 @@
                   "width": "fill_container",
                   "fill": "$field-fill",
                   "cornerRadius": "$radius-lg",
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1,
-                    "fill": "$border-soft"
-                  },
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
                   "gap": 8,
                   "padding": [
                     14,
@@ -1164,7 +1151,8 @@
                       "width": "fill_container",
                       "content": "jane@example.com",
                       "fontFamily": "$font-body",
-                      "fontSize": 15
+                      "fontSize": 15,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -1199,11 +1187,9 @@
                   "width": "fill_container",
                   "fill": "$field-fill",
                   "cornerRadius": "$radius-lg",
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1,
-                    "fill": "$border-soft"
-                  },
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
                   "gap": 8,
                   "padding": [
                     14,
@@ -1219,15 +1205,16 @@
                       "width": "fill_container",
                       "content": "••••••••••",
                       "fontFamily": "$font-body",
-                      "fontSize": 15
+                      "fontSize": 15,
+                      "fontWeight": "normal"
                     },
                     {
-                      "type": "icon_font",
+                      "type": "icon",
                       "id": "SVh5W",
                       "width": 20,
                       "height": 20,
-                      "iconFontName": "eye-off",
-                      "iconFontFamily": "lucide",
+                      "icon": "eye-off",
+                      "library": "lucide",
                       "fill": "$text-tertiary"
                     }
                   ]
@@ -1241,7 +1228,8 @@
                   "content": "At least 8 characters, with 1 uppercase, 1 lowercase, 1 number and 1 special character.",
                   "lineHeight": 1.4,
                   "fontFamily": "$font-body",
-                  "fontSize": 12
+                  "fontSize": 12,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -1311,7 +1299,8 @@
                       "fill": "$text-secondary",
                       "content": "Password strength",
                       "fontFamily": "$font-body",
-                      "fontSize": 12
+                      "fontSize": 12,
+                      "fontWeight": "normal"
                     },
                     {
                       "type": "text",
@@ -1376,7 +1365,8 @@
                   "fill": "$text-secondary",
                   "content": "Already have an account?",
                   "fontFamily": "$font-body",
-                  "fontSize": 14
+                  "fontSize": 14,
+                  "fontWeight": "normal"
                 },
                 {
                   "type": "text",
@@ -1425,10 +1415,8 @@
               "width": 44,
               "height": 44,
               "fill": "#00000000",
-              "stroke": {
-                "thickness": 0,
-                "fill": "#00000000"
-              },
+              "stroke": "#00000000",
+              "strokeAlignment": "inner",
               "padding": [
                 0,
                 4,
@@ -1439,12 +1427,12 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "icon_font",
+                  "type": "icon",
                   "id": "XhCWQ",
                   "width": 28,
                   "height": 28,
-                  "iconFontName": "chevron-left",
-                  "iconFontFamily": "lucide",
+                  "icon": "chevron-left",
+                  "library": "lucide",
                   "fill": "$text-primary"
                 }
               ]
@@ -1486,12 +1474,12 @@
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "icon_font",
+                      "type": "icon",
                       "id": "Mnslz",
                       "width": 96,
                       "height": 96,
-                      "iconFontName": "mail-open",
-                      "iconFontFamily": "lucide",
+                      "icon": "mail-open",
+                      "library": "lucide",
                       "fill": "$primary-dark"
                     }
                   ]
@@ -1559,7 +1547,8 @@
                   "lineHeight": 1.5,
                   "textAlign": "center",
                   "fontFamily": "$font-body",
-                  "fontSize": 14
+                  "fontSize": 14,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -1575,11 +1564,9 @@
               "width": "fill_container",
               "fill": "$surface-card",
               "cornerRadius": "$radius-lg",
-              "stroke": {
-                "align": "inside",
-                "thickness": 1,
-                "fill": "$border-soft"
-              },
+              "stroke": "$border-soft",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
               "layout": "vertical",
               "padding": 20,
               "children": [
@@ -1602,21 +1589,19 @@
                           "height": 32,
                           "fill": "$primary",
                           "cornerRadius": "$radius-full",
-                          "stroke": {
-                            "align": "inside",
-                            "thickness": 1.5,
-                            "fill": "$primary"
-                          },
+                          "stroke": "$primary",
+                          "strokeWidth": 1.5,
+                          "strokeAlignment": "inner",
                           "justifyContent": "center",
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "icon_font",
+                              "type": "icon",
                               "id": "C1vCBS",
                               "width": 16,
                               "height": 16,
-                              "iconFontName": "send",
-                              "iconFontFamily": "lucide",
+                              "icon": "send",
+                              "library": "lucide",
                               "fill": "$white"
                             }
                           ]
@@ -1661,7 +1646,8 @@
                           "content": "We've delivered the link to your inbox.",
                           "lineHeight": 1.45,
                           "fontFamily": "$font-body",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -1686,21 +1672,19 @@
                           "height": 32,
                           "fill": "$primary-soft",
                           "cornerRadius": "$radius-full",
-                          "stroke": {
-                            "align": "inside",
-                            "thickness": 2,
-                            "fill": "$primary"
-                          },
+                          "stroke": "$primary",
+                          "strokeWidth": 2,
+                          "strokeAlignment": "inner",
                           "justifyContent": "center",
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "icon_font",
+                              "type": "icon",
                               "id": "tl9Wu",
                               "width": 16,
                               "height": 16,
-                              "iconFontName": "mail-open",
-                              "iconFontFamily": "lucide",
+                              "icon": "mail-open",
+                              "library": "lucide",
                               "fill": "$primary-dark"
                             }
                           ]
@@ -1745,7 +1729,8 @@
                           "content": "Tap the verification button inside.",
                           "lineHeight": 1.45,
                           "fontFamily": "$font-body",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -1770,21 +1755,19 @@
                           "height": 32,
                           "fill": "$surface",
                           "cornerRadius": "$radius-full",
-                          "stroke": {
-                            "align": "inside",
-                            "thickness": 1.5,
-                            "fill": "$border-soft"
-                          },
+                          "stroke": "$border-soft",
+                          "strokeWidth": 1.5,
+                          "strokeAlignment": "inner",
                           "justifyContent": "center",
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "icon_font",
+                              "type": "icon",
                               "id": "ZAV1N",
                               "width": 16,
                               "height": 16,
-                              "iconFontName": "check",
-                              "iconFontFamily": "lucide",
+                              "icon": "check",
+                              "library": "lucide",
                               "fill": "$text-tertiary"
                             }
                           ]
@@ -1822,7 +1805,8 @@
                           "content": "We'll log you in automatically.",
                           "lineHeight": 1.45,
                           "fontFamily": "$font-body",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -1866,7 +1850,8 @@
                   "fill": "$text-secondary",
                   "content": "Didn't get the email?",
                   "fontFamily": "$font-body",
-                  "fontSize": 14
+                  "fontSize": 14,
+                  "fontWeight": "normal"
                 },
                 {
                   "type": "text",
@@ -1960,11 +1945,8 @@
                   "fill": "$primary",
                   "width": 140,
                   "height": 140,
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 0,
-                    "fill": "#00000000"
-                  }
+                  "stroke": "#00000000",
+                  "strokeAlignment": "inner"
                 },
                 {
                   "type": "ellipse",
@@ -1990,13 +1972,10 @@
                   "fill": "#00000000",
                   "width": 76,
                   "height": 48,
-                  "stroke": {
-                    "align": "center",
-                    "thickness": 10,
-                    "join": "round",
-                    "cap": "round",
-                    "fill": "$primary-dark"
-                  }
+                  "stroke": "$primary-dark",
+                  "strokeWidth": 10,
+                  "strokeLinejoin": "round",
+                  "strokeLinecap": "round"
                 },
                 {
                   "type": "ellipse",
@@ -2092,7 +2071,8 @@
               "fill": "$text-secondary",
               "content": "Logging you in now…",
               "fontFamily": "$font-body",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -2160,11 +2140,9 @@
       "width": 1280,
       "fill": "$surface-card",
       "cornerRadius": 24,
-      "stroke": {
-        "align": "inside",
-        "thickness": 1,
-        "fill": "$border-soft"
-      },
+      "stroke": "$border-soft",
+      "strokeWidth": 1,
+      "strokeAlignment": "inner",
       "layout": "vertical",
       "gap": 32,
       "padding": [
@@ -2200,7 +2178,8 @@
               "content": "Complete palette: brand scales, neutrals, semantic and surface tokens. Each swatch shows token name + hex.",
               "lineHeight": 1.5,
               "fontFamily": "$font-body",
-              "fontSize": 14
+              "fontSize": 14,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -2235,7 +2214,8 @@
                   "width": "fill_container",
                   "content": "Tonal scale built around the brand color. 60 is the base; 50 = DARK accent; 95 = SOFT background.",
                   "fontFamily": "$font-body",
-                  "fontSize": 13
+                  "fontSize": 13,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -2276,7 +2256,8 @@
                       "fill": "$text-tertiary",
                       "content": "#052311",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2311,7 +2292,8 @@
                       "fill": "$text-tertiary",
                       "content": "#083B1F",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2346,7 +2328,8 @@
                       "fill": "$text-tertiary",
                       "content": "#0F5731",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2381,7 +2364,8 @@
                       "fill": "$text-tertiary",
                       "content": "#157B47",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2426,7 +2410,8 @@
                       "fill": "$text-tertiary",
                       "content": "#1FA866",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2471,7 +2456,8 @@
                       "fill": "$text-tertiary",
                       "content": "#34C77B",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2506,7 +2492,8 @@
                       "fill": "$text-tertiary",
                       "content": "#5BD495",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2541,7 +2528,8 @@
                       "fill": "$text-tertiary",
                       "content": "#86E5B4",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2576,7 +2564,8 @@
                       "fill": "$text-tertiary",
                       "content": "#BAF1D1",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2594,11 +2583,9 @@
                       "fill": "#DCFCE7",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -2626,7 +2613,8 @@
                       "fill": "$text-tertiary",
                       "content": "#DCFCE7",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -2665,7 +2653,8 @@
                   "width": "fill_container",
                   "content": "Muted desaturated green for secondary accents, chips, and supporting surfaces.",
                   "fontFamily": "$font-body",
-                  "fontSize": 13
+                  "fontSize": 13,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -2706,7 +2695,8 @@
                       "fill": "$text-tertiary",
                       "content": "#04140C",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2741,7 +2731,8 @@
                       "fill": "$text-tertiary",
                       "content": "#102218",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2776,7 +2767,8 @@
                       "fill": "$text-tertiary",
                       "content": "#1F3826",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2811,7 +2803,8 @@
                       "fill": "$text-tertiary",
                       "content": "#305037",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2846,7 +2839,8 @@
                       "fill": "$text-tertiary",
                       "content": "#4A6B53",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2891,7 +2885,8 @@
                       "fill": "$text-tertiary",
                       "content": "#6A9B81",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2926,7 +2921,8 @@
                       "fill": "$text-tertiary",
                       "content": "#8FB6A2",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2961,7 +2957,8 @@
                       "fill": "$text-tertiary",
                       "content": "#B0CFBE",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -2979,11 +2976,9 @@
                       "fill": "#D1E5D8",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -3001,7 +2996,8 @@
                       "fill": "$text-tertiary",
                       "content": "#D1E5D8",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3019,11 +3015,9 @@
                       "fill": "#E8F2EC",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -3041,7 +3035,8 @@
                       "fill": "$text-tertiary",
                       "content": "#E8F2EC",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -3080,7 +3075,8 @@
                   "width": "fill_container",
                   "content": "Warm coral red, used for destructive actions, errors, and warm accents.",
                   "fontFamily": "$font-body",
-                  "fontSize": 13
+                  "fontSize": 13,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -3121,7 +3117,8 @@
                       "fill": "$text-tertiary",
                       "content": "#2A0507",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3156,7 +3153,8 @@
                       "fill": "$text-tertiary",
                       "content": "#4D0C10",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3191,7 +3189,8 @@
                       "fill": "$text-tertiary",
                       "content": "#791C20",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3226,7 +3225,8 @@
                       "fill": "$text-tertiary",
                       "content": "#A23036",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3261,7 +3261,8 @@
                       "fill": "$text-tertiary",
                       "content": "#C9474D",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3296,7 +3297,8 @@
                       "fill": "$text-tertiary",
                       "content": "#E5605F",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3341,7 +3343,8 @@
                       "fill": "$text-tertiary",
                       "content": "#F87171",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3376,7 +3379,8 @@
                       "fill": "$text-tertiary",
                       "content": "#FBA1A1",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3394,11 +3398,9 @@
                       "fill": "#FDCBCB",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -3416,7 +3418,8 @@
                       "fill": "$text-tertiary",
                       "content": "#FDCBCB",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3434,11 +3437,9 @@
                       "fill": "#FFEAEA",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -3456,7 +3457,8 @@
                       "fill": "$text-tertiary",
                       "content": "#FFEAEA",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -3495,7 +3497,8 @@
                   "width": "fill_container",
                   "content": "Greenish-warm neutrals for text, borders, dividers. 10 = primary text; 40 = secondary; 60 = tertiary/hint.",
                   "fontFamily": "$font-body",
-                  "fontSize": 13
+                  "fontSize": 13,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -3546,7 +3549,8 @@
                       "fill": "$text-tertiary",
                       "content": "#161D19",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3581,7 +3585,8 @@
                       "fill": "$text-tertiary",
                       "content": "#2B322D",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3616,7 +3621,8 @@
                       "fill": "$text-tertiary",
                       "content": "#414843",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3661,7 +3667,8 @@
                       "fill": "$text-tertiary",
                       "content": "#59605B",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3696,7 +3703,8 @@
                       "fill": "$text-tertiary",
                       "content": "#717973",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3741,7 +3749,8 @@
                       "fill": "$text-tertiary",
                       "content": "#8B938C",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3776,7 +3785,8 @@
                       "fill": "$text-tertiary",
                       "content": "#A5ADA7",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3811,7 +3821,8 @@
                       "fill": "$text-tertiary",
                       "content": "#C1C8C2",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3829,11 +3840,9 @@
                       "fill": "#DDE4DD",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -3851,7 +3860,8 @@
                       "fill": "$text-tertiary",
                       "content": "#DDE4DD",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3869,11 +3879,9 @@
                       "fill": "#EBF3EB",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -3891,7 +3899,8 @@
                       "fill": "$text-tertiary",
                       "content": "#EBF3EB",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -3930,7 +3939,8 @@
                   "width": "fill_container",
                   "content": "For feedback and inline status. Each base color pairs with a soft tint for backgrounds.",
                   "fontFamily": "$font-body",
-                  "fontSize": 13
+                  "fontSize": 13,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -3971,7 +3981,8 @@
                       "fill": "$text-tertiary",
                       "content": "#22C55E",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3989,11 +4000,9 @@
                       "fill": "#DCFCE7",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4011,7 +4020,8 @@
                       "fill": "$text-tertiary",
                       "content": "#DCFCE7",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4046,7 +4056,8 @@
                       "fill": "$text-tertiary",
                       "content": "#F59E0B",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4064,11 +4075,9 @@
                       "fill": "#FEF3C7",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4086,7 +4095,8 @@
                       "fill": "$text-tertiary",
                       "content": "#FEF3C7",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4121,7 +4131,8 @@
                       "fill": "$text-tertiary",
                       "content": "#EF4444",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4139,11 +4150,9 @@
                       "fill": "#FEE2E2",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4161,7 +4170,8 @@
                       "fill": "$text-tertiary",
                       "content": "#FEE2E2",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4196,7 +4206,8 @@
                       "fill": "$text-tertiary",
                       "content": "#3B82F6",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4214,11 +4225,9 @@
                       "fill": "#DBEAFE",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4236,7 +4245,8 @@
                       "fill": "$text-tertiary",
                       "content": "#DBEAFE",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -4275,7 +4285,8 @@
                   "width": "fill_container",
                   "content": "Background, fields, borders, shadow + scrim. SHADOW_SOFT is PRIMARY @ 20% alpha for soft drop. SCRIM is black @ 40%.",
                   "fontFamily": "$font-body",
-                  "fontSize": 13
+                  "fontSize": 13,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -4299,11 +4310,9 @@
                       "fill": "#F4F9F4",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4321,7 +4330,8 @@
                       "fill": "$text-tertiary",
                       "content": "#F4F9F4",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4339,11 +4349,9 @@
                       "fill": "#FFFFFF",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4361,7 +4369,8 @@
                       "fill": "$text-tertiary",
                       "content": "#FFFFFF",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4379,11 +4388,9 @@
                       "fill": "#F1F6F2",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4401,7 +4408,8 @@
                       "fill": "$text-tertiary",
                       "content": "#F1F6F2",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4419,11 +4427,9 @@
                       "fill": "#E2E8E3",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4441,7 +4447,8 @@
                       "fill": "$text-tertiary",
                       "content": "#E2E8E3",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4459,11 +4466,9 @@
                       "fill": "#C1C8C2",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4481,7 +4486,8 @@
                       "fill": "$text-tertiary",
                       "content": "#C1C8C2",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4499,11 +4505,9 @@
                       "fill": "#E9FBEF",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4521,7 +4525,8 @@
                       "fill": "$text-tertiary",
                       "content": "#E9FBEF",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4556,7 +4561,8 @@
                       "fill": "$text-tertiary",
                       "content": "#3334C77B",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4591,7 +4597,8 @@
                       "fill": "$text-tertiary",
                       "content": "#66000000",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -4630,7 +4637,8 @@
                   "width": "fill_container",
                   "content": "Absolutes and text role tokens. Text colors map onto NEUTRAL_10/40/60.",
                   "fontFamily": "$font-body",
-                  "fontSize": 13
+                  "fontSize": 13,
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -4654,11 +4662,9 @@
                       "fill": "#FFFFFF",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4676,7 +4682,8 @@
                       "fill": "$text-tertiary",
                       "content": "#FFFFFF",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4711,7 +4718,8 @@
                       "fill": "$text-tertiary",
                       "content": "#000000",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4729,11 +4737,9 @@
                       "fill": "#00000000",
                       "width": "fill_container",
                       "height": 84,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border-soft"
-                      }
+                      "stroke": "$border-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner"
                     },
                     {
                       "type": "text",
@@ -4751,7 +4757,8 @@
                       "fill": "$text-tertiary",
                       "content": "#00000000",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4786,7 +4793,8 @@
                       "fill": "$text-tertiary",
                       "content": "#161D19",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4821,7 +4829,8 @@
                       "fill": "$text-tertiary",
                       "content": "#59605B",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4856,11 +4865,906 @@
                       "fill": "$text-tertiary",
                       "content": "#8B938C",
                       "fontFamily": "$font-body",
-                      "fontSize": 11
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
               ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Z8IGP4",
+      "x": 2175,
+      "y": 0,
+      "name": "Screen - Forgot Password",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "$surface",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Kfwtf",
+          "name": "appbar",
+          "width": "fill_container",
+          "fill": "$surface",
+          "gap": 8,
+          "padding": [
+            20,
+            16,
+            8,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "quhZm",
+              "name": "back",
+              "width": 44,
+              "height": 44,
+              "fill": "#00000000",
+              "stroke": "#00000000",
+              "strokeAlignment": "inner",
+              "padding": [
+                0,
+                4,
+                0,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "WvQCo",
+                  "width": 28,
+                  "height": 28,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "m3MHG",
+          "name": "content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            16,
+            24,
+            0,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "JDzA3",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cPsnp",
+                  "fill": "$text-primary",
+                  "content": "FORGOT",
+                  "lineHeight": 1,
+                  "fontFamily": "$font-display",
+                  "fontSize": 44,
+                  "fontWeight": "800",
+                  "letterSpacing": -1
+                },
+                {
+                  "type": "text",
+                  "id": "mUb5G",
+                  "fill": "$text-primary",
+                  "content": "PASSWORD",
+                  "lineHeight": 1,
+                  "fontFamily": "$font-display",
+                  "fontSize": 44,
+                  "fontWeight": "800",
+                  "letterSpacing": -1
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "AHWv4",
+              "width": "fill_container",
+              "height": 20
+            },
+            {
+              "type": "frame",
+              "id": "OWufm",
+              "width": "fill_container",
+              "height": 10
+            },
+            {
+              "type": "text",
+              "id": "x5v22g",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Enter your email and we'll send you a code to reset your password.",
+              "lineHeight": 1.5,
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "MscGE",
+              "width": "fill_container",
+              "height": 32
+            },
+            {
+              "type": "frame",
+              "id": "KnFp8",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "o1NTu6",
+                  "fill": "$text-primary",
+                  "content": "EMAIL ADDRESS",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.2
+                },
+                {
+                  "type": "frame",
+                  "id": "kiono",
+                  "width": "fill_container",
+                  "fill": "$field-fill",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qmP2F",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "jane@example.com",
+                      "fontFamily": "$font-body",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RUN54",
+              "width": "fill_container",
+              "height": "fill_container"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "zW24W",
+          "width": "fill_container",
+          "fill": "$surface",
+          "layout": "vertical",
+          "padding": [
+            8,
+            24,
+            28,
+            24
+          ],
+          "children": [
+            {
+              "id": "O8NqZQ",
+              "type": "ref",
+              "ref": "ekwYF",
+              "width": "fill_container",
+              "padding": [
+                18,
+                28
+              ],
+              "descendants": {
+                "f1s5G": {
+                  "content": "SEND CODE"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "r3p4U0",
+      "x": 2610,
+      "y": 0,
+      "name": "Screen - Enter Code",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "$surface",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "UWDJh",
+          "width": "fill_container",
+          "fill": "$surface",
+          "gap": 8,
+          "padding": [
+            20,
+            16,
+            8,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "HhV8d",
+              "width": 44,
+              "height": 44,
+              "fill": "#00000000",
+              "stroke": "#00000000",
+              "strokeAlignment": "inner",
+              "padding": [
+                0,
+                4,
+                0,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "x6f7Q",
+                  "width": 28,
+                  "height": 28,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "HQKDl",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            24,
+            24,
+            0,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "KC0wI",
+              "width": 160,
+              "height": 160,
+              "fill": "$primary-soft-2",
+              "cornerRadius": "$radius-full",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "E4vAGP",
+                  "width": 160,
+                  "height": 160,
+                  "fill": "#00000000",
+                  "cornerRadius": "$radius-full",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "xyY71",
+                      "width": 96,
+                      "height": 96,
+                      "icon": "shield-check",
+                      "library": "lucide",
+                      "fill": "$primary-dark"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "IwQfy",
+              "width": "fill_container",
+              "height": 28
+            },
+            {
+              "type": "frame",
+              "id": "eEfFs",
+              "width": "fill_container",
+              "layout": "vertical",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vzpFG",
+                  "fill": "$text-primary",
+                  "content": "ENTER",
+                  "lineHeight": 1,
+                  "textAlign": "center",
+                  "fontFamily": "$font-display",
+                  "fontSize": 40,
+                  "fontWeight": "800",
+                  "letterSpacing": -1
+                },
+                {
+                  "type": "text",
+                  "id": "qEWHd",
+                  "fill": "$text-primary",
+                  "content": "CODE",
+                  "lineHeight": 1,
+                  "textAlign": "center",
+                  "fontFamily": "$font-display",
+                  "fontSize": 40,
+                  "fontWeight": "800",
+                  "letterSpacing": -1
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pfjDs",
+              "width": "fill_container",
+              "height": 12
+            },
+            {
+              "type": "frame",
+              "id": "omkLP",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sQoBZ",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": 280,
+                  "content": "Enter the 6-digit code we sent to jane@example.com",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "SkW7A",
+              "width": "fill_container",
+              "height": 32
+            },
+            {
+              "type": "frame",
+              "id": "GCTsA",
+              "name": "OTP Inputs",
+              "width": "fill_container",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "NPHnZ",
+                  "name": "OTP Box 1",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "$field-fill",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YmzGG",
+                      "name": "Digit",
+                      "fill": "$text-primary",
+                      "content": "4",
+                      "fontFamily": "$font-display",
+                      "fontSize": 24,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rSeUh",
+                  "name": "OTP Box 2",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "$field-fill",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "gMYry",
+                      "name": "Digit",
+                      "fill": "$text-primary",
+                      "content": "9",
+                      "fontFamily": "$font-display",
+                      "fontSize": 24,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "U2QoEt",
+                  "name": "OTP Box 3",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "$field-fill",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xHqfV",
+                      "name": "Digit",
+                      "fill": "$text-primary",
+                      "content": "2",
+                      "fontFamily": "$font-display",
+                      "fontSize": 24,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "voIjI",
+                  "name": "OTP Box 4",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "$field-fill",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$primary",
+                  "strokeWidth": 2,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center"
+                },
+                {
+                  "type": "frame",
+                  "id": "tEpfR",
+                  "name": "OTP Box 5",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "$field-fill",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center"
+                },
+                {
+                  "type": "frame",
+                  "id": "UgEPZ",
+                  "name": "OTP Box 6",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "$field-fill",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Ul1rO",
+              "width": "fill_container",
+              "height": "fill_container"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vqHoP",
+          "width": "fill_container",
+          "fill": "$surface",
+          "layout": "vertical",
+          "gap": 14,
+          "padding": [
+            8,
+            24,
+            28,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "wBpaz",
+              "width": "fill_container",
+              "gap": 4,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XfalZ",
+                  "fill": "$text-secondary",
+                  "content": "Didn't get the code?",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "YqwBq",
+                  "fill": "$text-tertiary",
+                  "content": "Resend (45s)",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "id": "Wwa9F",
+              "type": "ref",
+              "ref": "ekwYF",
+              "width": "fill_container",
+              "padding": [
+                18,
+                28
+              ],
+              "descendants": {
+                "f1s5G": {
+                  "content": "VERIFY"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "y2NYtK",
+      "x": 3045,
+      "y": 0,
+      "name": "Screen - New Password",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "$surface",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "j3Zgp",
+          "name": "appbar",
+          "width": "fill_container",
+          "fill": "$surface",
+          "gap": 8,
+          "padding": [
+            20,
+            16,
+            8,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "NkPI2",
+              "name": "back",
+              "width": 44,
+              "height": 44,
+              "fill": "#00000000",
+              "stroke": "#00000000",
+              "strokeAlignment": "inner",
+              "padding": [
+                0,
+                4,
+                0,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "wWyV9",
+                  "width": 28,
+                  "height": 28,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "F5Dan",
+          "name": "content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            16,
+            24,
+            0,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "Lltjw",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "w8NAb7",
+                  "fill": "$text-primary",
+                  "content": "NEW",
+                  "lineHeight": 1,
+                  "fontFamily": "$font-display",
+                  "fontSize": 44,
+                  "fontWeight": "800",
+                  "letterSpacing": -1
+                },
+                {
+                  "type": "text",
+                  "id": "fqDLf",
+                  "fill": "$text-primary",
+                  "content": "PASSWORD",
+                  "lineHeight": 1,
+                  "fontFamily": "$font-display",
+                  "fontSize": 44,
+                  "fontWeight": "800",
+                  "letterSpacing": -1
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "f07d1",
+              "width": "fill_container",
+              "height": 20
+            },
+            {
+              "type": "frame",
+              "id": "PzCao",
+              "width": "fill_container",
+              "height": 10
+            },
+            {
+              "type": "text",
+              "id": "x4wkF",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Create a new password for your account.",
+              "lineHeight": 1.5,
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "XpXql",
+              "width": "fill_container",
+              "height": 32
+            },
+            {
+              "type": "frame",
+              "id": "p2Xyr",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "a96Vv",
+                  "fill": "$text-primary",
+                  "content": "NEW PASSWORD",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.2
+                },
+                {
+                  "type": "frame",
+                  "id": "gKYVY",
+                  "name": "Password Field",
+                  "width": "fill_container",
+                  "fill": "$field-fill",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "sD9Oc",
+                      "name": "Value",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "••••••••••",
+                      "fontFamily": "$font-body",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "o3MBn2",
+                      "name": "Toggle",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "eye-off",
+                      "library": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Omu3k",
+              "width": "fill_container",
+              "height": 20
+            },
+            {
+              "type": "frame",
+              "id": "TIeSM",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "w8vrXW",
+                  "fill": "$text-primary",
+                  "content": "CONFIRM PASSWORD",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.2
+                },
+                {
+                  "type": "frame",
+                  "id": "xG6Au",
+                  "width": "fill_container",
+                  "fill": "$field-fill",
+                  "cornerRadius": "$radius-lg",
+                  "stroke": "$border-soft",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "f6JhNK",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "••••••••••",
+                      "fontFamily": "$font-body",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "sUj1C",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "eye-off",
+                      "library": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zt3fL",
+              "width": "fill_container",
+              "height": "fill_container"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "PNBm7",
+          "width": "fill_container",
+          "fill": "$surface",
+          "layout": "vertical",
+          "padding": [
+            8,
+            24,
+            28,
+            24
+          ],
+          "children": [
+            {
+              "id": "k7P1Fo",
+              "type": "ref",
+              "ref": "ekwYF",
+              "width": "fill_container",
+              "padding": [
+                18,
+                28
+              ],
+              "descendants": {
+                "f1s5G": {
+                  "content": "RESET PASSWORD"
+                }
+              }
             }
           ]
         }

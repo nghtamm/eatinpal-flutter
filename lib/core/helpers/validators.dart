@@ -33,4 +33,13 @@ abstract final class Validators {
     if (v.isEmpty) return 'Password is required';
     return null;
   }
+
+  static final _otpRegex = RegExp(r'^\d{6}$');
+
+  static String? otp(String? value) {
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return 'Code is required';
+    if (!_otpRegex.hasMatch(v)) return 'Enter the 6-digit code';
+    return null;
+  }
 }

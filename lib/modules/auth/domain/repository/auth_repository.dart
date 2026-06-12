@@ -18,4 +18,16 @@ abstract class AuthRepository {
   Future<Either<AppException, String>> verify({required String token});
 
   Future<Either<AppException, String>> magicLink({required String token});
+
+  Future<Either<AppException, String>> forgotPassword({required String email});
+
+  Future<Either<AppException, String>> verifyOTP({
+    required String email,
+    required String otp,
+  });
+
+  Future<Either<AppException, String>> resetPassword({
+    required String email,
+    required String newPassword,
+  });
 }
