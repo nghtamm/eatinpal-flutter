@@ -60,7 +60,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       LoginParams(email: event.email, password: event.password),
     );
     result.fold((left) {
-      if (left is ForbiddenException) {
+      if (left is ForbiddenException &&
+          left.errorCode == 'EMAIL_NOT_VERIFIED') {
         emit(AuthRequiresVerification(left.message));
       } else {
         emit(AuthFailure(left.message));

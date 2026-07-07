@@ -30,6 +30,14 @@ class AuthInterceptor extends QueuedInterceptorsWrapper {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    final response = err.response;
+    if (response?.statusCode == 403 &&
+        response?.data is Map &&
+        response!.data['error_code'] == 'ACCOUNT_DEACTIVATED') {
+      await _storage.clearCredentialsToken();
+      return handler.next(err);
+    }
+
     if (err.response?.statusCode != 401) {
       return handler.next(err);
     }

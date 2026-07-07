@@ -41,6 +41,7 @@ abstract final class ErrorHandler {
     final statusCode = response?.statusCode;
     final data = response?.data;
     final message = _extractMessage(data);
+    final errorCode = _extractErrorCode(data);
 
     switch (statusCode) {
       case 400:
@@ -48,11 +49,13 @@ abstract final class ErrorHandler {
           message:
               message ??
               'An error occurred unexpectedly. Please try again later.',
+          errorCode: errorCode,
           data: data,
         );
       case 401:
         return UnauthorizedException(
           message: message ?? 'Your session has expired. Please log in again.',
+          errorCode: errorCode,
           data: data,
         );
       case 403:
@@ -60,11 +63,13 @@ abstract final class ErrorHandler {
           message:
               message ??
               '''You don't have permission to perform this action.''',
+          errorCode: errorCode,
           data: data,
         );
       case 404:
         return NotFoundException(
           message: message ?? 'The requested resource was not found.',
+          errorCode: errorCode,
           data: data,
         );
       case 406:
@@ -72,11 +77,13 @@ abstract final class ErrorHandler {
           message:
               message ??
               'An error occurred unexpectedly. Please try again later.',
+          errorCode: errorCode,
           data: data,
         );
       case 408:
         return RequestTimeoutException(
           message: message ?? 'Connection timed out. Please try again.',
+          errorCode: errorCode,
           data: data,
         );
       case 409:
@@ -84,6 +91,7 @@ abstract final class ErrorHandler {
           message:
               message ??
               'An error occurred unexpectedly. Please try again later.',
+          errorCode: errorCode,
           data: data,
         );
       case 413:
@@ -91,6 +99,7 @@ abstract final class ErrorHandler {
           message:
               message ??
               'File size limit exceeded. Please choose a smaller file and try again.',
+          errorCode: errorCode,
           data: data,
         );
       case 500:
@@ -98,6 +107,7 @@ abstract final class ErrorHandler {
           message:
               message ??
               'An error occurred unexpectedly. Please try again later.',
+          errorCode: errorCode,
           data: data,
         );
       case 502:
@@ -105,6 +115,7 @@ abstract final class ErrorHandler {
           message:
               message ??
               'An error occurred unexpectedly. Please try again later.',
+          errorCode: errorCode,
           data: data,
         );
       case 503:
@@ -112,6 +123,7 @@ abstract final class ErrorHandler {
           message:
               message ??
               'An error occurred unexpectedly. Please try again later.',
+          errorCode: errorCode,
           data: data,
         );
       case 504:
@@ -119,6 +131,7 @@ abstract final class ErrorHandler {
           message:
               message ??
               'An error occurred unexpectedly. Please try again later.',
+          errorCode: errorCode,
           data: data,
         );
       default:
@@ -127,6 +140,7 @@ abstract final class ErrorHandler {
               message ??
               'An error occurred unexpectedly. Please try again later.',
           statusCode: statusCode,
+          errorCode: errorCode,
           data: data,
         );
     }
@@ -135,6 +149,13 @@ abstract final class ErrorHandler {
   static String? _extractMessage(dynamic data) {
     if (data is Map<String, dynamic>) {
       return data['message'] as String?;
+    }
+    return null;
+  }
+
+  static String? _extractErrorCode(dynamic data) {
+    if (data is Map<String, dynamic>) {
+      return data['error_code'] as String?;
     }
     return null;
   }

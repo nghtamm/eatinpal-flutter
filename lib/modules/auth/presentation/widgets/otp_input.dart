@@ -7,8 +7,14 @@ import 'package:eatinpal/core/constants/app_typography.dart';
 class OTPInput extends StatefulWidget {
   final void Function(String) onChanged;
   final int length;
+  final bool enabled;
 
-  const OTPInput({super.key, required this.onChanged, this.length = 6});
+  const OTPInput({
+    super.key,
+    required this.onChanged,
+    this.length = 6,
+    this.enabled = true,
+  });
 
   @override
   State<OTPInput> createState() => _OTPInputState();
@@ -66,6 +72,7 @@ class _OTPInputState extends State<OTPInput> {
           child: TextField(
             controller: _controllers[index],
             focusNode: _focusNodes[index],
+            enabled: widget.enabled,
             textAlign: TextAlign.center,
             keyboardType: TextInputType.number,
             maxLength: 1,
@@ -87,6 +94,10 @@ class _OTPInputState extends State<OTPInput> {
                 borderSide: const BorderSide(color: AppColors.BORDER_SOFT),
               ),
               enabledBorder: OutlineInputBorder(
+                borderRadius: radius,
+                borderSide: const BorderSide(color: AppColors.BORDER_SOFT),
+              ),
+              disabledBorder: OutlineInputBorder(
                 borderRadius: radius,
                 borderSide: const BorderSide(color: AppColors.BORDER_SOFT),
               ),

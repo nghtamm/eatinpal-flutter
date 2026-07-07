@@ -54,7 +54,7 @@ class PasswordStrength extends StatelessWidget {
               Row(
                 children: List.generate(_BARS, (idx) {
                   final isFilled = idx < p.filled;
-                  
+
                   return Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(

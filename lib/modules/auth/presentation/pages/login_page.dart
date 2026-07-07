@@ -94,7 +94,6 @@ class _LoginViewState extends State<_LoginView> {
 
   void _onStateChanged(BuildContext context, AuthState state) {
     if (state is AuthAuthenticated) {
-      AppSnackbar.success(context, state.message);
       context.go(RoutePaths.HOME);
     } else if (state is AuthRequiresVerification) {
       context.pushReplacement(

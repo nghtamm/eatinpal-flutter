@@ -44,8 +44,18 @@ class _EnterCodeViewState extends State<_EnterCodeView> {
   String _otp = '';
   int _cooldown = 0;
   Timer? _timer;
+  bool _locked = false;
+  int _inputGen = 0;
 
   String get _email => widget.email ?? '';
+
+  void _setLocked(bool locked) {
+    setState(() {
+      _locked = locked;
+      _otp = '';
+      _inputGen++;
+    });
+  }
 
   @override
   void dispose() {
@@ -112,7 +122,11 @@ class _EnterCodeViewState extends State<_EnterCodeView> {
       context.pushReplacement(RoutePaths.RESET_PASSWORD, extra: _email);
     } else if (state is OTPSent) {
       AppSnackbar.info(context, state.message);
+      _setLocked(false);
       _startCooldown();
+    } else if (state is OTPLocked) {
+      _setLocked(true);
+      AppSnackbar.error(context, state.message);
     } else if (state is ForgotPasswordFailure) {
       AppSnackbar.error(context, state.message);
     }
@@ -135,7 +149,11 @@ class _EnterCodeViewState extends State<_EnterCodeView> {
           SIZED_BOX_H12,
           _subtitle(),
           SIZED_BOX_H32,
-          OTPInput(onChanged: (value) => setState(() => _otp = value)),
+          OTPInput(
+            key: ValueKey(_inputGen),
+            enabled: !_locked,
+            onChanged: (value) => setState(() => _otp = value),
+          ),
         ],
       ),
     );
@@ -184,6 +202,21 @@ class _EnterCodeViewState extends State<_EnterCodeView> {
   }
 
   Widget _bottom() {
+    if (_locked) {
+      final isDisabled = _cooldown > 0;
+      final label = isDisabled
+          ? 'REQUEST NEW CODE (${_cooldown}s)'
+          : 'REQUEST NEW CODE';
+      return Padding(
+        padding: const EdgeInsets.all(AppPadding.XL),
+        child: AppButton(
+          label: label,
+          onPressed: isDisabled ? null : _resend,
+          height: 56,
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(AppPadding.XL),
       child: Column(

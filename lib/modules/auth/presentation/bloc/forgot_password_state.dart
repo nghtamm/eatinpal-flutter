@@ -42,6 +42,15 @@ class ResetDone extends ForgotPasswordState {
   List<Object?> get props => [message];
 }
 
+class OTPLocked extends ForgotPasswordState {
+  final String message;
+
+  const OTPLocked(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class ForgotPasswordFailure extends ForgotPasswordState {
   final String message;
 

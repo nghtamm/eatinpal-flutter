@@ -270,8 +270,14 @@ Always name fold params `left` / `right`. Always check `is <Subclass>` if the BL
 class AppException implements Exception {
   final String message;
   final int? statusCode;
-  final dynamic data;
-  const AppException({required this.message, this.statusCode, this.data});
+  final String? errorCode;     // server's `error_code` (e.g. 'EMAIL_NOT_VERIFIED')
+  final dynamic data;          // raw error envelope (fallback / debugging)
+  const AppException({
+    required this.message,
+    this.statusCode,
+    this.errorCode,
+    this.data,
+  });
 
   @override
   String toString() => 'AppException($statusCode): $message';
@@ -295,7 +301,9 @@ class CancelException extends AppException { /* request cancelled */ }
 class NoInternetException extends AppException { /* connection error */ }
 ```
 
-Default messages are fallbacks — `ErrorHandler` overrides with the server's `message` field when present.
+Default messages are fallbacks — `ErrorHandler` overrides with the server's `message` field when present. `errorCode` carries the backend's snake_case `error_code` string when the response includes one (NestJS emits it on select 401/403s). Branch on it in the BLoC — `left.errorCode == 'EMAIL_NOT_VERIFIED'` — instead of digging into `left.data['error_code']`. (`AuthInterceptor.onError` is the one exception: it reads `data['error_code']` straight off the raw response, because it runs at the Dio layer before `ErrorHandler` wraps the error into an `AppException`.)
+
+Backend `error_code` values currently in use: `EMAIL_NOT_VERIFIED` (403, login / magic-link), `ACCOUNT_DEACTIVATED` (403, login / magic-link / any authed request), `OTP_LOCKED` (403, verify-otp), `OTP_INVALID` (401, verify-otp).
 
 Add a new subclass when a new HTTP code needs domain-specific behaviour (e.g. `LockedException` for HTTP 423). Wire it into `ErrorHandler._handleErrResponse` (which is hands-off — surface the change).
 
@@ -339,26 +347,36 @@ abstract final class ErrorHandler {
     final statusCode = response?.statusCode;
     final data = response?.data;
     final message = _extractMessage(data);
+    final errorCode = _extractErrorCode(data);
 
     switch (statusCode) {
       case 400:
         return BadRequestException(
           message: message ?? 'An error occurred unexpectedly. Please try again later.',
+          errorCode: errorCode,
           data: data,
         );
       case 401:
         return UnauthorizedException(
           message: message ?? 'Your session has expired. Please log in again.',
+          errorCode: errorCode,
           data: data,
         );
       // ... 403–504 each return their own typed exception with an inline
-      //     fallback message; the server `message` wins when present
+      //     fallback message + errorCode; the server `message` wins when present
     }
   }
 
   static String? _extractMessage(dynamic data) {
     if (data is Map<String, dynamic>) {
       return data['message'] as String?;
+    }
+    return null;
+  }
+
+  static String? _extractErrorCode(dynamic data) {
+    if (data is Map<String, dynamic>) {
+      return data['error_code'] as String?;
     }
     return null;
   }

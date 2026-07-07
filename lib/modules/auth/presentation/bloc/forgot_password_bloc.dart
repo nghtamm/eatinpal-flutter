@@ -44,10 +44,13 @@ class ForgotPasswordBloc
     final result = await _verifyOTP(
       VerifyOTPParams(email: event.email, otp: event.otp),
     );
-    result.fold(
-      (left) => emit(ForgotPasswordFailure(left.message)),
-      (right) => emit(OTPVerified(right)),
-    );
+    result.fold((left) {
+      if (left.errorCode == 'OTP_LOCKED') {
+        emit(OTPLocked(left.message));
+      } else {
+        emit(ForgotPasswordFailure(left.message));
+      }
+    }, (right) => emit(OTPVerified(right)));
   }
 
   Future<void> _onResetSubmitted(
